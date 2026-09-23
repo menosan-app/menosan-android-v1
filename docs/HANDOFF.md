@@ -29,7 +29,7 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 ## 4. Next steps (in order)
 1. **Human:** view the new screens on a device or emulator in light and dark mode, and run the E2E sign-in check (entry below, §4.1). Then merge `feat/an0-foundation`.
 2. **AN-1 (Sat 9/26, critical path):** build the Audit tab (`EntriesRoute`) and the manual entry form (`LogManualRoute`) with the mockups `Waste Audit Dashboard`, `Manual Waste Entry`, and friends (DESIGN.md §4), using the shared components and `MenosanTheme.colors`. Also see the AN-1 notes in the entry below.
-3. AN-2 / AN-3 / AN-4 as planned. Low priority (team): extra preferences, and the type-DELETE vs. simple delete dialog (build type-DELETE first).
+3. AN-2 / AN-3 / AN-4 as planned. Low priority (team): extra preferences. Account deletion uses the type-DELETE confirmation (team). The mockups are a style reference only; the plan defines behavior.
 
 ## 5. Verify the current state
 ```bash
@@ -43,7 +43,7 @@ export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
 - Dark mode draws the illustrations on a Paper Light card (their background is opaque).
 
 ## 7. Decisions made (also logged in docs/DECISIONS.md)
-- Roboto (bundled variable font). In dark mode `primary` is Moss Light and brand fills use `primaryContainer` = Moss. Signed-out flow and app shell as above. Extra preferences and the delete-dialog style are low priority.
+- Roboto (bundled variable font). In dark mode `primary` is Moss Light and brand fills use `primaryContainer` = Moss. Signed-out flow and app shell as above. Extra preferences are low priority. Account deletion uses type-DELETE. The mockups are a style reference only.
 
 ## 8. API contract changes
 - None.

@@ -1,6 +1,6 @@
 # Menosan UI design reference
 
-The mockups in `docs/design/*.png` (28 screens) are the **visual inspiration** for the app: palette, type, layout, components, and tone. They are mockups, not specs. **Behavior, data, and copy rules still come from `docs/DEVELOPMENT_PLAN.md` and `docs/api-contract.md`.** When a mockup conflicts with them, the plan wins (see §5). If you deviate from either, log it in `docs/DECISIONS.md`.
+The mockups in `docs/design/*.png` (28 screens) are a **style reference only** (team, 2026-09-24): palette, type, layout, components, and tone. They are not specs for flows, features, or behavior. **Behavior, data, flows, and copy rules come from `docs/DEVELOPMENT_PLAN.md` and `docs/api-contract.md`.** When a mockup shows something different (a feature, a flow, a dialog), follow the plan (see §5). If you deviate from the plan, log it in `docs/DECISIONS.md`.
 
 Before building a screen, open its mockup(s) from the table in §4.
 
@@ -93,5 +93,5 @@ Material 3 mapping (`Theme.kt`):
 8. **Audit history filters:** the entries list is the current week (UFR10). Past weeks kept locally are read-only (no Edit/Delete in `⋮`). "Editable until" = the Saturday 11:59 pm PHT that ends the entry's week.
 9. **Sign-in flow (built):** Welcome → *Create Account* shows the privacy card and consent checkbox first, then Google sign-in, then `POST /v1/account`. `201` → "Creating your account" → "You're in"; `200` (the account already existed) → Home. Welcome → *Log in* runs Google sign-in, then `GET /v1/me`: `200` → Home, `404` → Create Account (already signed in, so the button reads "Create my account"). There are no Terms of Use yet, so the consent refers to the privacy notice. The mockup's "Getting Started / Personalize the app" card was replaced by the short privacy card the plan requires.
 10. **Other Preferences** (Notifications, Units, Language) are **low priority** (team, 2026-09-24): not in v1. Hide them. The UI is English only, and v1 has no notifications.
-11. **Profile:** the button at the bottom must be **Log out** (the mockup says "Log in"). Account deletion: choosing between the plan's type-DELETE confirmation and the mockup's simple Proceed dialog is **low priority** (team, 2026-09-24). Build the plan's type-DELETE version first; it's the safer one.
+11. **Profile:** the button at the bottom must be **Log out** (the mockup says "Log in"). Account deletion uses the plan's **type-DELETE** confirmation (team, 2026-09-24): the user types DELETE before the Delete button is enabled. Style the dialog like the mockup (Rust trash icon and title, Cancel and Delete buttons), but don't use its one-tap Proceed behavior.
 12. The Home "Online" pill and the sync chips are good. Also add a "Couldn't sync" state for entries with `lastError`.
