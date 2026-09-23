@@ -13,7 +13,10 @@
     <string name="insights_loading">Loading your reports…</string>
     <string name="insights_showing_saved">Showing your saved reports. Connect to the internet to update them.</string>
     <string name="insights_report_stats">%1$s · %2$s</string>
-    <string name="insights_adopted_count">%1$d tried</string>
+    <plurals name="insights_adopted">
+        <item quantity="one">%d idea tried</item>
+        <item quantity="other">%d ideas tried</item>
+    </plurals>
 
     <!-- Shared report words -->
     <string name="reports_offline_summary">Offline summary</string>
@@ -55,8 +58,14 @@
     <string name="report_comparison_none">No comparison — there is no data for the previous week.</string>
     <string name="report_comparison_week">Week of %1$s</string>
     <string name="report_comparison_total">%1$d → %2$d pcs</string>
-    <string name="report_comparison_fewer">%1$d fewer pieces than the week before</string>
-    <string name="report_comparison_more">%1$d more pieces than the week before</string>
+    <plurals name="report_comparison_fewer">
+        <item quantity="one">%d fewer piece than the week before</item>
+        <item quantity="other">%d fewer pieces than the week before</item>
+    </plurals>
+    <plurals name="report_comparison_more">
+        <item quantity="one">%d more piece than the week before</item>
+        <item quantity="other">%d more pieces than the week before</item>
+    </plurals>
     <string name="report_comparison_same">About the same as the week before</string>
     <string name="report_comparison_pct">(%1$s%%)</string>
     <string name="report_comparison_show_all">Show every subcategory</string>
@@ -69,7 +78,6 @@
     <string name="report_criterion_most_frequent">Most frequent</string>
     <string name="report_criterion_highest_quantity">Highest quantity</string>
     <string name="report_criterion_avoidable">Avoidable</string>
-    <string name="report_hotspot_rank">Hotspot %1$d</string>
 
     <!-- Recommendations and adoption -->
     <string name="report_ideas_title">Ideas to try this week</string>

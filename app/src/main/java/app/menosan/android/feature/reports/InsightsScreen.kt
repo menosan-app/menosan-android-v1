@@ -164,7 +164,7 @@ private fun reportStats(report: ReportListItem): String {
         piecesText(report.analyzedQuantity),
         pluralStringResource(R.plurals.reports_hotspots, report.hotspotCount, report.hotspotCount),
     )
-    return if (report.adoptedCount > 0) "$base · ${stringResource(R.string.insights_adopted_count, report.adoptedCount)}" else base
+    return if (report.adoptedCount > 0) "$base · ${pluralStringResource(R.plurals.insights_adopted, report.adoptedCount, report.adoptedCount)}" else base
 }
 
 /** The newest report, highlighted as a Moss hero card. */

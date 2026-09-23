@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,6 +36,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -45,14 +45,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.R
-import app.menosan.android.core.model.WasteCategory
 import app.menosan.android.core.ui.components.MessageBanner
 import app.menosan.android.core.ui.components.Pill
 import app.menosan.android.core.ui.components.ScreenHeader
@@ -75,7 +75,7 @@ import app.menosan.android.feature.interventions.RecommendationDetailsSheet
 fun ReportScreen(onBack: () -> Unit, viewModel: ReportViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
-    val context = LocalContext.current
+    val resources = LocalResources.current
     LaunchedEffect(viewModel) {
         viewModel.messages.collect { message ->
             val text = when (message) {
@@ -85,7 +85,7 @@ fun ReportScreen(onBack: () -> Unit, viewModel: ReportViewModel = hiltViewModel(
                 ReportMessage.Offline -> R.string.report_adopt_offline
                 ReportMessage.Failed -> R.string.report_adopt_failed
             }
-            snackbar.showSnackbar(context.getString(text))
+            snackbar.showSnackbar(resources.getString(text))
         }
     }
     Box(Modifier.fillMaxSize()) {
@@ -326,8 +326,8 @@ private fun ComparisonDetails(comparison: ComparisonDto, state: ReportUiState) {
         }
         Text(
             when (total.trend) {
-                Trend.DECREASED -> stringResource(R.string.report_comparison_fewer, absInt(total.delta))
-                Trend.INCREASED -> stringResource(R.string.report_comparison_more, absInt(total.delta))
+                Trend.DECREASED -> pluralStringResource(R.plurals.report_comparison_fewer, absInt(total.delta), absInt(total.delta))
+                Trend.INCREASED -> pluralStringResource(R.plurals.report_comparison_more, absInt(total.delta), absInt(total.delta))
                 else -> stringResource(R.string.report_comparison_same)
             },
             style = MaterialTheme.typography.bodyMedium,
@@ -402,7 +402,7 @@ private fun IdeasSection(
     onOpenDetails: (String) -> Unit,
 ) {
     val hotspots = view.report.hotspots
-    var selected by rememberSaveable(view.weekStart.toString()) { mutableStateOf(0) }
+    var selected by rememberSaveable(view.weekStart.toString()) { mutableIntStateOf(0) }
     val hotspot = hotspots[selected.coerceIn(0, hotspots.lastIndex)]
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionTitle(
