@@ -11,7 +11,7 @@ Kotlin + Jetpack Compose Android app for **Menosan** (minSdk 26 / Android 8.0).
 1. Android Studio (latest stable). Gradle runs on Android Studio's JBR (`JAVA_HOME="C:\Program Files\Android\Android Studio\jbr"` on the command line).
 2. Put `google-services.json` in `app/` (it's gitignored; never commit the prod one) and register your debug SHA-1/SHA-256 in Firebase.
 3. Optional `local.properties` keys:
-   - `API_BASE_URL_STAGING` (default `https://menosan-api-staging.onrender.com/`), `API_BASE_URL_PROD` (default is a placeholder until hosting is decided).
+   - `API_BASE_URL_STAGING` (default `https://menosan-api-staging.onrender.com/`), `API_BASE_URL_PROD` (default is also the staging URL: the team uses the staging backend for release).
    - `MENOSAN_KEYSTORE_FILE`, `MENOSAN_KEYSTORE_PASSWORD`, `MENOSAN_KEY_ALIAS`, `MENOSAN_KEY_PASSWORD` to sign release builds with the shared keystore. Without them, release APKs are unsigned.
 
 ## Commands

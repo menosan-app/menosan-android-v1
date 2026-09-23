@@ -54,12 +54,13 @@ android {
             dimension = "env"
             buildConfigField(
                 "String", "API_BASE_URL",
-                // TODO(prod): replace with the production URL once hosting is decided.
-                quoted(localOrEnv("API_BASE_URL_PROD") ?: "https://menosan-api-prod.invalid/"),
+                // The team uses the staging backend for release too (docs/DECISIONS.md, 2026-09-24).
+                quoted(localOrEnv("API_BASE_URL_PROD") ?: "https://menosan-api-staging.onrender.com/"),
             )
-            buildConfigField("long", "HTTP_CONNECT_TIMEOUT_SECONDS", "15L")
-            buildConfigField("long", "HTTP_READ_TIMEOUT_SECONDS", "30L")
-            buildConfigField("long", "HTTP_CALL_TIMEOUT_SECONDS", "60L")
+            // Same Render Free service as staging, so the same cold-start-friendly timeouts.
+            buildConfigField("long", "HTTP_CONNECT_TIMEOUT_SECONDS", "75L")
+            buildConfigField("long", "HTTP_READ_TIMEOUT_SECONDS", "75L")
+            buildConfigField("long", "HTTP_CALL_TIMEOUT_SECONDS", "120L")
             resValue("string", "app_name", "Menosan")
         }
     }

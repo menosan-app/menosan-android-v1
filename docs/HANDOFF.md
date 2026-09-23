@@ -43,7 +43,7 @@ export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
 - Dark mode draws the illustrations on a Paper Light card (their background is opaque).
 
 ## 7. Decisions made (also logged in docs/DECISIONS.md)
-- Roboto (bundled variable font). In dark mode `primary` is Moss Light and brand fills use `primaryContainer` = Moss. Signed-out flow and app shell as above. Extra preferences are low priority. Account deletion uses type-DELETE. The mockups are a style reference only.
+- Roboto (bundled variable font). In dark mode `primary` is Moss Light and brand fills use `primaryContainer` = Moss. Signed-out flow and app shell as above. Extra preferences are low priority. Account deletion uses type-DELETE. The mockups are a style reference only. The prod flavor uses the staging backend URL (team).
 
 ## 8. API contract changes
 - None.
