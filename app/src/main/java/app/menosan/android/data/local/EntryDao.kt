@@ -6,7 +6,7 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
-/** Basic entry queries. AN-1 owns this DAO and extends it for the outbox. */
+/** Entry queries. AN-1 owns this DAO. AN-3 reads [getWeek] and [getPending], so don't rename or remove methods. */
 @Dao
 interface EntryDao {
     @Query("SELECT * FROM entries WHERE week_start = :weekStart AND sync_state != 'PENDING_DELETE' ORDER BY created_at DESC")
@@ -23,6 +23,17 @@ interface EntryDao {
 
     @Query("SELECT COUNT(*) FROM entries WHERE sync_state != 'SYNCED'")
     fun observePendingCount(): Flow<Int>
+
+    /**
+     * What the next sync sends: every local change that hasn't been answered with a final error. Rows with
+     * [EntryEntity.lastError] ("Couldn't sync") wait until the user edits or deletes them, so they aren't retried forever.
+     */
+    @Query("SELECT * FROM entries WHERE sync_state != 'SYNCED' AND last_error IS NULL ORDER BY created_at")
+    suspend fun getOutbox(): List<EntryEntity>
+
+    /** Every row of one week, including pending deletes (used by the merge after `GET /v1/entries`). */
+    @Query("SELECT * FROM entries WHERE week_start = :weekStart")
+    suspend fun getWeekIncludingDeleted(weekStart: LocalDate): List<EntryEntity>
 
     @Upsert
     suspend fun upsert(entry: EntryEntity)
