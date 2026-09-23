@@ -1,11 +1,8 @@
 package app.menosan.android.feature.reports
 
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import app.menosan.android.R
-import app.menosan.android.core.ui.components.PlaceholderScreen
 import app.menosan.android.navigation.HistoryRoute
 import app.menosan.android.navigation.ReportRoute
 
@@ -15,9 +12,9 @@ import app.menosan.android.navigation.ReportRoute
  */
 fun NavGraphBuilder.reportsScreens(navController: NavHostController) {
     composable<HistoryRoute> {
-        PlaceholderScreen(stringResource(R.string.tab_insights), "AN-3", onBack = null)
+        InsightsScreen(onOpenReport = { week -> navController.navigate(ReportRoute(week.toString())) })
     }
     composable<ReportRoute> {
-        PlaceholderScreen(stringResource(R.string.nav_report), "AN-3") { navController.popBackStack() }
+        ReportScreen(onBack = { navController.popBackStack() })
     }
 }

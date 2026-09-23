@@ -1,4 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- AN-3 (reports) strings. Each workstream keeps its strings in its own file to avoid merge conflicts. -->
 <resources>
+    <!-- Insights tab (report history) -->
+    <string name="insights_title">Insights</string>
+    <string name="insights_subtitle">Your weekly reports, hotspots, and progress.</string>
+    <string name="insights_latest_label">Your latest report</string>
+    <string name="insights_open_report">Open report</string>
+    <string name="insights_past_reports">Past reports</string>
+    <string name="insights_empty_title">No reports yet</string>
+    <string name="insights_empty_body">Your first weekly report appears after your first full week of logging.</string>
+    <string name="insights_empty_hint">Weeks run Sunday to Saturday. Keep logging and your report will be ready on Sunday.</string>
+    <string name="insights_loading">Loading your reports…</string>
+    <string name="insights_showing_saved">Showing your saved reports. Connect to the internet to update them.</string>
+    <string name="insights_report_stats">%1$s · %2$s</string>
+    <string name="insights_adopted_count">%1$d tried</string>
+
+    <!-- Shared report words -->
+    <string name="reports_offline_summary">Offline summary</string>
+    <string name="reports_latest">Latest</string>
+    <string name="reports_retry">Try again</string>
+    <string name="reports_server_waking">The server is waking up. This can take up to a minute.</string>
+    <string name="reports_error_offline">Can\'t reach Menosan right now. Check your internet connection and try again.</string>
+    <string name="reports_error_server">Something went wrong on our side. Please try again in a moment.</string>
+    <plurals name="reports_entries">
+        <item quantity="one">%d entry</item>
+        <item quantity="other">%d entries</item>
+    </plurals>
+    <plurals name="reports_pieces">
+        <item quantity="one">%d pc</item>
+        <item quantity="other">%d pcs</item>
+    </plurals>
+    <plurals name="reports_hotspots">
+        <item quantity="one">%d hotspot</item>
+        <item quantity="other">%d hotspots</item>
+    </plurals>
+    <string name="reports_entries_and_pieces">%1$s · %2$s</string>
+    <string name="reports_week_range_year">%1$s, %2$d</string>
+
+    <!-- Weekly report -->
+    <string name="report_loading">Loading your report…</string>
+    <string name="report_not_found">There\'s no report for this week. Reports are made for finished weeks with at least one entry.</string>
+    <string name="report_showing_saved">Showing your saved copy. Connect to the internet to update it.</string>
+    <string name="report_offline_banner">Offline summary. Connect to the internet to get suggestions for your hotspots.</string>
+    <string name="report_offline_banner_partial">Some comparisons will appear once you\'re back online.</string>
+    <string name="report_totals_title">This week\'s totals</string>
+    <string name="report_totals_entries">Entries</string>
+    <string name="report_totals_pieces">Pieces</string>
+    <string name="report_categories_title">By category</string>
+    <string name="report_category_value">%1$s · %2$s%%</string>
+    <string name="report_breakdown_title">What you logged</string>
+    <string name="report_breakdown_empty">Nothing in the analyzed categories this week.</string>
+    <string name="report_special_line">Special waste: %1$s. Logged, not included in analysis.</string>
+    <string name="report_comparison_title">Compared with the week before</string>
+    <string name="report_comparison_none">No comparison — there is no data for the previous week.</string>
+    <string name="report_comparison_week">Week of %1$s</string>
+    <string name="report_comparison_total">%1$d → %2$d pcs</string>
+    <string name="report_comparison_fewer">%1$d fewer pieces than the week before</string>
+    <string name="report_comparison_more">%1$d more pieces than the week before</string>
+    <string name="report_comparison_same">About the same as the week before</string>
+    <string name="report_comparison_pct">(%1$s%%)</string>
+    <string name="report_comparison_show_all">Show every subcategory</string>
+    <string name="report_comparison_hide_all">Show less</string>
+    <string name="report_comparison_row">%1$d → %2$d</string>
+    <string name="report_hotspots_title">Your hotspots</string>
+    <string name="report_hotspots_subtitle">Where most of your waste came from this week.</string>
+    <string name="report_hotspots_special_only">You only logged special waste this week. It isn\'t included in the analysis, so there are no hotspots or suggestions this time.</string>
+    <string name="report_top_hotspot">Top hotspot</string>
+    <string name="report_criterion_most_frequent">Most frequent</string>
+    <string name="report_criterion_highest_quantity">Highest quantity</string>
+    <string name="report_criterion_avoidable">Avoidable</string>
+    <string name="report_hotspot_rank">Hotspot %1$d</string>
+
+    <!-- Recommendations and adoption -->
+    <string name="report_ideas_title">Ideas to try this week</string>
+    <string name="report_ideas_subtitle_latest">Pick one or two small changes. You\'ll see how they went in your next report.</string>
+    <string name="report_ideas_subtitle_closed">These were the ideas for this week.</string>
+    <string name="report_choose_hotspot">Choose a hotspot</string>
+    <string name="report_ideas_none">No ideas for this hotspot yet.</string>
+    <string name="report_type_prevent">Prevent</string>
+    <string name="report_type_reduce">Reduce</string>
+    <string name="report_type_reuse">Reuse</string>
+    <string name="report_cost_free">Free</string>
+    <string name="report_cost_saves_money">Saves money</string>
+    <string name="report_cost_small_one_time">Small one-time cost</string>
+    <string name="report_effort_low">Low effort</string>
+    <string name="report_effort_medium">Some effort</string>
+    <string name="report_keep_it_up">Keep it up</string>
+    <string name="report_trying_this">You\'re trying this</string>
+    <string name="report_tried_this">You tried this</string>
+    <string name="report_note_for_you">A note for you</string>
+    <string name="report_view_details">View details</string>
+    <string name="report_adopt">Adopt</string>
+    <string name="report_adopted">Adopted</string>
+    <string name="report_adopted_undo_description">Adopted. Tap to stop trying this.</string>
+    <string name="report_stop_trying">Stop trying this</string>
+    <string name="report_close">Close</string>
+    <string name="report_what_to_do">What to do</string>
+    <string name="report_steps">Steps</string>
+    <string name="report_not_measured">Not measured — no entries were logged the following week.</string>
+    <string name="report_adopt_done">Added. Give it a try this week!</string>
+    <string name="report_unadopt_done">Removed. You can pick another idea anytime this week.</string>
+    <string name="report_adopt_window_closed">This report is closed for changes. Your next report brings new ideas.</string>
+    <string name="report_adopt_offline">Adopting needs internet. Please try again when you\'re online.</string>
+    <string name="report_adopt_failed">Couldn\'t save that just now. Please try again.</string>
+
+    <!-- Impact -->
+    <string name="report_impact_title">How your changes went</string>
+    <string name="report_impact_subtitle">The ideas you picked last week, and what you logged this week.</string>
+    <string name="report_impact_target">For %1$s</string>
+    <string name="report_impact_quantities">%1$d → %2$d pcs</string>
+    <string name="report_impact_decreased">Decreased</string>
+    <string name="report_impact_same">Same</string>
+    <string name="report_impact_increased">Increased</string>
+    <string name="report_impact_decreased_body">Nice work — this is helping. Keep it up!</string>
+    <string name="report_impact_same_body">About the same. Small steps still count, so keep going.</string>
+    <string name="report_impact_increased_body">That\'s okay — try a smaller step this week.</string>
+
+    <!-- Last-week recap (offline summary) -->
+    <string name="report_recap_title">Last week\'s report (%1$s)</string>
+    <string name="report_recap_hotspots">Hotspots: %1$s</string>
+    <string name="report_recap_tried">You tried: %1$s</string>
 </resources>
