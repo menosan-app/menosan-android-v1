@@ -11,6 +11,7 @@ Kotlin + Jetpack Compose app for Menosan. **Read `docs/DEVELOPMENT_PLAN.md` §1�
 - **Offline report (plan §5.7):** when a week has closed and the device is offline, build a provisional report on the device using `core/analytics`, a port of the backend's `aggregate()`, `findHotspots()`, `compare()`, and `measureImpact()`. It includes totals and hotspots, plus the comparison, the impact of last week's adoptions, and a last-week recap when local data allows. New intervention recommendations and adoption stay online-only. It must pass `app/src/test/resources/analytics-test-vectors.json`. The server report replaces it once the device is online.
 - Never call Gemini from the app, and never embed API keys. All AI goes through the backend.
 - Copy is English, short, and supportive. No blame, no rankings, no comparisons with other households.
+- **UI follows `docs/DESIGN.md`** (tokens, components, and a screen map to the mockups in `docs/design/`). Open the matching mockup before building a screen. Where a mockup conflicts with the plan or the contract, the plan wins (DESIGN.md §5).
 - `taxonomy.json` in `assets/` must match `menosan-api/src/main/resources/taxonomy.json`.
 
 ## Session start and handoff (mandatory)
