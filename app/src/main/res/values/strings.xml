@@ -6,7 +6,6 @@
 
     <!-- Common -->
     <string name="action_back">Back</string>
-    <string name="action_sign_out">Sign out</string>
     <string name="status_online">Online</string>
     <string name="status_offline">Offline</string>
     <string name="error_offline">Can\'t reach Menosan right now. Check your internet connection and try again.</string>
@@ -89,10 +88,4 @@
     <string name="ready_insights_body">Find your hotspot and get tips</string>
     <string name="ready_get_started">Get started</string>
 
-    <!-- Home (AN-0 placeholder) -->
-    <string name="dashboard_greeting">Hello!</string>
-    <string name="dashboard_greeting_name">Hello, %1$s!</string>
-    <string name="dashboard_subtitle">A cleaner home starts with small steps</string>
-    <string name="dashboard_this_week">This week</string>
-    <string name="dashboard_log_hint">Tap + below to log your waste.</string>
 </resources>

@@ -4,6 +4,83 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 
 ---
 
+# Handoff — menosan-android — 2026-09-24 (AN-4 Home and Profile)
+
+## 1. Session
+- **Agent / model:** Claude Code (Claude Opus 5.5)
+- **Workstream(s):** AN-4: Home dashboard, Profile (settings and privacy), export, logout, account deletion, and polish (plan §10)
+- **Branch:** `feat/an4-settings-home` (from `main` `679a8b2`). Not pushed and not merged. Commits: `6da765e` screens, `f3375b6` tests and polish, plus `docs: handoff AN-4`.
+- **Overall state:** 🟡 Code complete. `testStagingDebugUnitTest lintStagingDebug assembleStagingDebug` passes (122 tests, lint "No issues found"). **Not yet checked on a device or against staging** (no emulator allowed this session).
+
+## 2. Done this session
+- [x] **Home** (`feature/dashboard/HomeScreen.kt`, `HomeViewModel.kt`) replaces the AN-0 placeholder:
+  - the wordmark, the Online/Offline pill, and the greeting;
+  - a Moss hero card with this week's range, live entries and pieces, and Canvas Sun–Sat bars (today highlighted), with no percentages;
+  - **Log manually** and **Log with photo** quick actions;
+  - banners for entries waiting to sync and for entries that couldn't sync (the second opens Audit);
+  - the latest report card ("Your report for … is ready", "Your latest report: …", or "Offline summary for …"), which opens `ReportRoute`;
+  - the top hotspot, labeled "From your … report";
+  - "This week you're trying" (only while `canAdopt`), or a "Pick an idea" nudge;
+  - "How your changes went" (report impacts);
+  - the first-report empty state;
+  - the 3 newest entries using AN-1's `EntryRow` (details, edit, and delete through `DeleteEntryDialog`), with **View all** → the Audit tab.
+
+  On open it calls `reportRepository.refreshReports()` and `entryRepository.refreshCurrentWeek()`. The temporary Sign out button is gone.
+- [x] **Profile** (`feature/settings/ProfileScreen.kt`, `ProfileViewModel.kt`):
+  - initials avatar, name, email, and a "Google account" pill;
+  - an Appearance bottom sheet (System / Light / Dark → `AppPreferences`);
+  - the privacy statement, plus the full `PrivacyNotice` in a sheet;
+  - **Export my data**: a confirm dialog → SAF `CreateDocument("application/json")` named `menosan-export-YYYY-MM-DD.json` (Manila date) → `GET /v1/export` streamed to the file on IO. A partial file is deleted on failure, and export is refused offline.
+  - **Delete my account & data**: type DELETE (any case) to enable Delete. It's online only. A 5xx is retried up to 3 attempts, then "try again"; a 401 asks the user to log in again. After `204`: `LocalDataCleaner.clearAll()` + `SignOutAction` + a goodbye Toast.
+  - **Log out**: if the outbox isn't empty, a warning offers "Try to sync first", "Log out anyway", or Cancel. Then it clears local data and signs out. The nav host returns to Welcome.
+- [x] Seams in AN-4 packages (`SettingsPorts.kt`: `NetworkStatus`, `AppearanceStore`, `AccountActions` + `DefaultAccountActions` + `SettingsModule`; `HomeViewModel.kt`: `SubcategoryLabels` + `DashboardModule`).
+- [x] Strings: `strings_settings.xml`, new `strings_dashboard.xml`. The dashboard strings moved out of `strings.xml`, and the unused `action_sign_out` was removed.
+- [x] Tests: `HomeViewModelTest` (8) and `ProfileViewModelTest` (19), with fakes in `test/.../feature/settings/An4Fakes.kt`. They cover the Home state building, the logout decision, the delete flow (the DELETE gate, a retry on 500, stopping after 3 tries, offline, 401, no dismiss while deleting, clear then sign out on 204), and export (the Manila-dated name, offline, cancel, errors).
+- [x] Polish: content descriptions on icon-only elements (the bars have a spoken summary, the avatar has a label, and decorative icons are null), headings semantics, scrolling screens, no fixed heights on text, theme colors only (`MenosanTheme.colors`, color scheme), and light and dark previews.
+
+## 3. In progress (unfinished)
+| Item | Where | What's left |
+|---|---|---|
+| Device check | phone (no emulator this session) | See §4.1. |
+
+## 4. Next steps (in order)
+1. **Human, on a device against staging:**
+   - Home with a new account (empty states) and with a seeded demo account (report card, hotspot, trying, impacts; tap through to the report).
+   - Export: pick a folder, open the file, and check that it holds the entries and reports. Also try in airplane mode.
+   - Delete account with a **throwaway** Google account: type DELETE → the goodbye Toast → Welcome → sign in again → treated as new (UAT 8).
+   - Logout with pending entries (airplane mode, log 2, Log out → the warning; try both choices), and logout with none.
+   - Appearance: switch System, Light, and Dark, and check both themes on Home and Profile.
+   - Font scale 1.3× and a 720p screen: nothing clipped, and everything scrolls.
+2. **Integrator:** merge order AN-1 → AN-3 → AN-2 → AN-4. AN-4 touches only its own packages plus `strings.xml` (removed the dashboard strings and `action_sign_out`). If AN-2 used `action_sign_out` or `dashboard_*`, restore them there.
+3. AN-5: full UAT pass on an API 26 emulator and a low-end phone.
+
+## 5. Verify the current state
+```bash
+export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
+./gradlew testStagingDebugUnitTest lintStagingDebug assembleStagingDebug   # 122 tests pass; lint: No issues found
+```
+
+## 6. Known issues / failing tests
+- UI not viewed on a device yet (compile, lint, and unit tests only).
+- Logout doesn't cancel an in-flight `SyncWorker` (owned by AN-1's `sync/`). After `clearAll()` the outbox is empty, so a running sync only finds nothing to send, but a current-week merge that was already in flight could write rows back before sign-out finishes (a very small window).
+- If a delete's `204` is lost (for example, the connection drops right after), the retry gets `401` because the Firebase user is gone. The user sees "log out and log in again". Logging out then clears the phone, and signing in again creates a new account.
+- `SyncNotices` (AN-1) is still not cleared on logout (a count only, no personal data).
+
+## 7. Decisions made (also logged in docs/DECISIONS.md)
+- Home: only live counts for the week in progress, with every report card labeled by its closed week. The report card wording, "trying" only while `canAdopt`, and the pick-an-idea nudge. Home refreshes reports and the current week on open. DELETE in any case. Delete retry and 401 handling. The logout warning's three choices. The export flow. The Profile contents. The AN-4 seam interfaces.
+
+## 8. API contract changes
+- None.
+
+## 9. Environment / setup notes
+- No new dependencies.
+- Files outside `feature/dashboard/` and `feature/settings/`: `res/values/strings.xml` (the dashboard strings moved to `strings_dashboard.xml`, and the unused `action_sign_out` was removed), plus `docs/DECISIONS.md` and `docs/HANDOFF.md`. AN-4 reuses AN-1's public UI (`EntryRow`, `DeleteEntryDialog`, `EntryFormats`, `WeekSummary`, the internal `deleteMessage`, `EntryDetailsRoute`), AN-3's `formatWeekRange`, and `PrivacyNotice` from `feature/auth` without changing them.
+
+## 10. Questions / blockers for humans
+- Please run the device checks in §4.1, especially the account deletion with a throwaway account.
+
+---
+
 # Handoff — menosan-android — 2026-09-24 (AN-2 photo logging)
 
 ## 1. Session
