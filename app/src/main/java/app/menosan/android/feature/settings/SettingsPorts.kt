@@ -3,6 +3,7 @@ package app.menosan.android.feature.settings
 import android.content.Context
 import android.net.Uri
 import android.provider.DocumentsContract
+import androidx.core.net.toUri
 import app.menosan.android.core.network.ApiError
 import app.menosan.android.core.network.ApiResult
 import app.menosan.android.core.network.ConnectivityObserver
@@ -85,7 +86,7 @@ class DefaultAccountActions @Inject constructor(
             is ApiResult.Success -> result.value
             is ApiResult.Failure -> return@withContext if (result.error is ApiError.Network) ExportResult.OFFLINE else ExportResult.SERVER_ERROR
         }
-        val uri = Uri.parse(documentUri)
+        val uri = documentUri.toUri()
         try {
             body.use { source ->
                 val input = source.byteStream()

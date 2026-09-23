@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -56,6 +57,7 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -246,7 +248,7 @@ private fun DayBars(perDay: List<Int>, todayIndex: Int, color: Color) {
     val description = stringResource(R.string.dashboard_bars_description, labels.zip(perDay).joinToString { (d, n) -> "$d $n" })
     val bar = color.copy(alpha = 0.45f)
     val track = color.copy(alpha = 0.12f)
-    Column(Modifier.fillMaxWidth().semantics(mergeDescendants = true) { contentDescription = description }) {
+    Column(Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = description }) {
         Canvas(Modifier.fillMaxWidth().height(56.dp)) {
             val slot = size.width / 7f
             val width = (slot * 0.5f).coerceAtMost(28.dp.toPx())
@@ -290,6 +292,7 @@ private fun QuickActionButton(icon: ImageVector, text: String, onClick: () -> Un
         onClick = onClick,
         shape = MaterialTheme.shapes.small,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
         modifier = modifier.heightIn(min = 52.dp),
     ) {
         Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
@@ -393,7 +396,6 @@ private fun ReportCards(report: LatestReportCard, state: HomeUiState, actions: H
             ),
         )
         if (report.isProvisional) {
-            Pill(stringResource(R.string.dashboard_offline_pill), MenosanTheme.colors.calm, MenosanTheme.colors.onCalm, icon = Icons.Outlined.CloudOff)
             Text(stringResource(R.string.dashboard_report_offline_body), style = MaterialTheme.typography.bodyMedium)
         }
     }

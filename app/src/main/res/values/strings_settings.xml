@@ -14,7 +14,6 @@
     <string name="profile_theme_light">Light mode</string>
     <string name="profile_theme_dark">Dark mode</string>
     <string name="profile_done">Done</string>
-    <string name="profile_open">Open</string>
 
     <!-- Data & privacy -->
     <string name="profile_data_privacy">Data &amp; Privacy</string>

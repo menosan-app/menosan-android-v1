@@ -41,7 +41,6 @@
     <string name="dashboard_report_offline_body">Connect to the internet to get ideas for your hotspots.</string>
     <string name="dashboard_report_open">Open report</string>
     <string name="dashboard_report_only_special">Only special waste was logged, so there are no hotspots this time.</string>
-    <string name="dashboard_offline_pill">Offline summary</string>
     <string name="dashboard_first_report_title">Your first weekly report</string>
     <string name="dashboard_first_report_body">When the week ends on Saturday night, you\'ll get a report with your top hotspots and simple ideas to try.</string>
 
