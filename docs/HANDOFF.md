@@ -4,6 +4,72 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 
 ---
 
+# Handoff — menosan-android — 2026-09-24 (AN-1 manual logging and offline sync)
+
+## 1. Session
+- **Agent / model:** Claude Code (Claude Opus 5.5)
+- **Workstream(s):** AN-1 Manual logging and offline sync (plan §10)
+- **Branch:** `feat/an1-logging` (based on `main` 68e8fda). Not pushed and not merged.
+- **Overall state:** 🟡 Code complete: 69 unit tests pass, lint has 0 errors and 0 warnings, and `assembleStagingDebug` works. **Not yet run on a device or emulator** (no emulator in this session), so the DoD check (airplane mode, log 5, kill, reconnect, synced exactly once) still needs a human.
+
+## 2. Done this session
+- [x] **Sync** (`sync/`): `EntrySyncEngine` pushes the outbox in batches of ≤ 500 through `POST /v1/entries/sync` and applies per-item results in one transaction per batch, only to rows that are unchanged since sending:
+  - `OK`: the row takes the server copy (an OK delete removes the row).
+  - `WEEK_CLOSED`: the row reverts to the server copy and a notice is counted.
+  - `INVALID`, `INVALID_TIMESTAMP`, `CONFLICT`: the row gets `lastError` ("Couldn't sync") and leaves the outbox until the user edits it.
+  - `ERROR`, unknown statuses, network errors, 5xx: retried.
+
+  It also does the current-week merge (`pullCurrentWeek`) and retention (`pruneOldEntries`: current week + 2 previous; pending rows are never pruned).
+- [x] `SyncWorker` (`@HiltWorker`) + `WorkManagerSyncRequester`: unique work `entry-sync`, REPLACE, CONNECTED, 30 s exponential backoff. `SyncTriggers` (started in `MenosanApp.onCreate`): prune on start, request a sync on start and sign-in, merge the current week whenever a signed-in user is online. Seams for tests: `EntryRemote`, `TransactionRunner`, `SyncNotices`, and `SyncRequester` (`SyncPorts.kt`), bound in `SyncModule`.
+- [x] `DefaultEntryRepository`: requests a sync after each write, delete always leaves a tombstone, `observeCurrentWeek()` follows the Sunday 00:00 Manila rollover (`data/repo/CurrentWeekFlow.kt`, re-checked every minute), and `refreshCurrentWeek()` does the merge. The interface is unchanged.
+- [x] `EntryDao`: added `getOutbox()` and `getWeekIncludingDeleted()`. No renames or removals, and **no schema change** (v1 JSON unchanged).
+- [x] Screens:
+  - `feature/logging/LogEntry.kt`: manual log and edit on `EntryFormFields`, with an offline banner, a toast confirmation, and read-only when the entry's week is closed.
+  - `feature/entries/AuditScreen.kt` + `AuditViewModel.kt`: the Audit tab (week range, entries and pieces, Sun–Sat Canvas bars, 4 category tiles, quick actions, entry rows with sync chips and a ⋮ menu, banners for waiting to sync, couldn't sync, and reverted changes, and read-only earlier weeks).
+  - `EntryDetails.kt`: `EntryDetailsRoute` with "Editable until Sat, Oct 3, 11:59 pm", entry method, sync status, and Edit/Delete.
+  - `EntryUi.kt`: `SyncChip`, `EntryRow`, `CategoryBadge`, and `DeleteEntryDialog`.
+  - `EntryFormats.kt`: Manila date text and `WeekSummary`.
+  - Registered in `LoggingNavigation.kt` and `EntriesNavigation.kt`. Strings are in `strings_logging.xml`.
+- [x] Tests: `EntrySyncEngineTest` (17), `DefaultEntryRepositoryTest` (8), `EntryFormatsTest` (3), with fakes in `test/.../sync/SyncFakes.kt`.
+
+## 3. In progress (unfinished)
+| Item | Where | What's left |
+|---|---|---|
+| Device check | phone or API 26 emulator | The DoD offline scenario and a visual check of the new screens in light and dark mode. |
+
+## 4. Next steps (in order)
+1. **Human:** `./gradlew installStagingDebug` on a phone. Go into airplane mode, log 5 entries, kill the app, reopen it, and turn airplane mode off. The 5 entries should show "Synced" and appear exactly once in `GET /v1/entries`. Also try edit and delete online and offline, and check the Audit tab in dark mode.
+2. **Integrator:** merge `feat/an1-logging` first (the order is AN-1 → AN-3 → AN-2 → AN-4).
+3. **AN-3:** to refresh reports after late entries sync, add an `AfterSyncAction` with `@IntoSet` in your own Hilt module (see `sync/SyncPorts.kt`). `SyncWorker` calls it after every pass that needs no retry, with the number of changes sent.
+4. **AN-2:** save the confirmed photo draft with `EntryRepository.create(draft.copy(source = PHOTO))`. `EntryFormFields`' API is unchanged. `WasteCategory.icon()` is now public.
+5. **AN-4:** logout should check `EntryRepository.hasPendingChanges()` before `LocalDataCleaner.clearAll()`. Home can reuse `WeekSummary`, `EntryRow`, and `SyncChip` from `feature/entries`, and `observePendingCount()` for the badge.
+
+## 5. Verify the current state
+```bash
+export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
+./gradlew testStagingDebugUnitTest lintStagingDebug assembleStagingDebug   # 69 tests pass; lint 0 errors, 0 warnings
+```
+
+## 6. Known issues / failing tests
+- An entry that "couldn't sync" in a **closed** week can't be edited or deleted locally, so it keeps the Couldn't sync chip (e.g. an offline create older than 14 days → `INVALID_TIMESTAMP`). This is rare during testing.
+- `SyncNotices` (a revert count only) is not cleared by `LocalDataCleaner`, so a notice could outlive a logout. It holds no personal data.
+- The week in the UI uses the device clock (in Manila). If the phone's clock is wrong, the server's `WEEK_CLOSED` or timestamp rules decide, and the local change is reverted or marked Couldn't sync.
+
+## 7. Decisions made (also logged in docs/DECISIONS.md)
+- Deletes always leave a tombstone. Sync uses REPLACE with 30 s backoff and a retry/stop matrix. Final item errors wait for the user. `WEEK_CLOSED` reverts and leaves a persisted notice. Results are applied only to unchanged rows. When the merge runs. What the Audit tab shows. Toast confirmations. No schema change.
+
+## 8. API contract changes
+- None.
+
+## 9. Environment / setup notes
+- No new dependencies.
+- Files outside AN-1's folders: `MenosanApp.kt` (inject and start `SyncTriggers`, +5 lines). `feature/logging/EntryFormFields.kt` is AN-1's; there, only `WasteCategory.icon()` changed from private to public.
+
+## 10. Questions / blockers for humans
+- Run the device DoD check (§4.1). I didn't start an emulator (memory rule).
+
+---
+
 # Handoff — menosan-android — 2026-09-24 06:00 PHT (prep for parallel workstreams)
 
 ## 1. Session
