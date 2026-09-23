@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="window_background">#FFF6FBF4</color>
-    <color name="ic_launcher_background">#FF2E6B4A</color>
-    <color name="ic_launcher_foreground">#FFF6FBF4</color>
+    <!-- Paper / Deep Forest (docs/DESIGN.md §2). Compose colors live in core/ui/theme. -->
+    <color name="window_background">#FFF6F3EA</color>
+    <color name="ic_launcher_background">#FFF6F3EA</color>
 </resources>

@@ -4,6 +4,58 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 
 ---
 
+# Handoff — menosan-android — 2026-09-24 05:00 PHT
+
+## 1. Session
+- **Agent / model:** Claude Code (Claude Opus 5.5)
+- **Workstream(s):** AN-0 follow-up: UI design context and app-shell restyle (docs/DESIGN.md)
+- **Branch:** `feat/an0-foundation` (not pushed and not merged into `main`)
+- **Overall state:** 🟡 The restyle builds, and tests and lint pass. **It hasn't been viewed on a device yet** (see §6). The E2E sign-in check from the entry below is still open.
+
+## 2. Done this session
+- [x] `docs/DESIGN.md`: the design reference (tokens, components, screen → workstream map, and conflicts with the plan). CLAUDE.md imports it, and AGENTS.md has a rule to follow it. 28 mockups in `docs/design/`, and the official palette, logo, and illustrations in `docs/design/essentials/`.
+- [x] Theme (`core/ui/theme/`): the official light and dark palettes (`Color.kt`), `MenosanTheme.colors` for category, chip, and banner colors, Roboto (the bundled variable font `res/font/roboto.ttf`), and shapes.
+- [x] Logo: `@drawable/ic_menosan_logo` from `Logo.svg`. The launcher icon is the two-leaf mark on Paper, plus a monochrome themed icon.
+- [x] Shared components (`core/ui/components/Brand.kt`): `MenosanLogo`, `MenosanWordmark`, `BackButton`, `ScreenHeader`, `MessageBanner`, `BrandLoading`, `GoogleButton` (with the Google G), and `Pill`.
+- [x] Signed-out flow per the mockups: `WelcomeScreen`, `SignInScreen` (Log in), `CreateAccountScreen` (privacy card + consent → Google → `POST /v1/account`), `AccountReadyScreen` ("You're in"), and brand loading screens. Start destination: Welcome, Log in (signed in with Google but not confirmed), or Home (confirmed).
+- [x] App shell (`navigation/MainBottomBar.kt`): the bottom bar Home · Audit · + · Insights · Profile, and the `AddEntrySheet` (Scan with Photo → `LogPhotoRoute`, Log Waste Manually → `LogManualRoute`). Tabs are `DashboardRoute`, `EntriesRoute`, `HistoryRoute`, and `SettingsRoute`.
+- [x] Home placeholder restyled (wordmark, Online/Offline pill, greeting, Moss hero card with the week range). AN-4 replaces it.
+
+## 3. In progress (unfinished)
+| Item | Where | What's left |
+|---|---|---|
+| Visual check of the restyle | emulator or device | Screens haven't been viewed yet. The emulator was stopped earlier because memory was low. |
+
+## 4. Next steps (in order)
+1. **Human:** view the new screens on a device or emulator in light and dark mode, and run the E2E sign-in check (entry below, §4.1). Then merge `feat/an0-foundation`.
+2. **AN-1 (Sat 9/26, critical path):** build the Audit tab (`EntriesRoute`) and the manual entry form (`LogManualRoute`) with the mockups `Waste Audit Dashboard`, `Manual Waste Entry`, and friends (DESIGN.md §4), using the shared components and `MenosanTheme.colors`. Also see the AN-1 notes in the entry below.
+3. AN-2 / AN-3 / AN-4 as planned. Low priority (team): extra preferences, and the type-DELETE vs. simple delete dialog (build type-DELETE first).
+
+## 5. Verify the current state
+```bash
+export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
+./gradlew testStagingDebugUnitTest lintStagingDebug assembleStagingDebug   # 33 tests pass; lint 0 errors, 1 warning (Gradle 9.7.1)
+```
+
+## 6. Known issues / failing tests
+- The restyle is only compile-checked, not viewed yet.
+- The illustrations are only ~340 px, so they look soft on high-density screens. Ask the designer for 3× or SVG exports with transparent backgrounds.
+- Dark mode draws the illustrations on a Paper Light card (their background is opaque).
+
+## 7. Decisions made (also logged in docs/DECISIONS.md)
+- Roboto (bundled variable font). In dark mode `primary` is Moss Light and brand fills use `primaryContainer` = Moss. Signed-out flow and app shell as above. Extra preferences and the delete-dialog style are low priority.
+
+## 8. API contract changes
+- None.
+
+## 9. Environment / setup notes
+- New assets: `res/font/roboto.ttf` (OFL), `res/drawable-nodpi/illustration_*.png`, and `res/drawable/ic_menosan_logo.xml`, `ic_google_g.xml`, `ic_launcher_monochrome.xml`.
+
+## 10. Questions / blockers for humans
+- Higher-resolution illustrations (see §6).
+
+---
+
 # Handoff — menosan-android — 2026-09-24 03:15 PHT
 
 ## 1. Session

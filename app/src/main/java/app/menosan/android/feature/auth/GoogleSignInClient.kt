@@ -82,3 +82,12 @@ class GoogleSignInClient @Inject constructor(
         const val TAG = "GoogleSignIn"
     }
 }
+
+/** The message to show for an unsuccessful sign-in, or null for success or when the user just cancelled. */
+@androidx.annotation.StringRes
+fun GoogleSignInResult.failureMessage(): Int? = when (this) {
+    is GoogleSignInResult.Success, GoogleSignInResult.Cancelled -> null
+    GoogleSignInResult.NoAccount -> R.string.sign_in_error_no_account
+    GoogleSignInResult.PlayServicesOutdated -> R.string.sign_in_error_play_services
+    GoogleSignInResult.Failed -> R.string.sign_in_error_generic
+}

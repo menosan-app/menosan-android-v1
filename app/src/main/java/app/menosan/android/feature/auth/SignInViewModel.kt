@@ -65,10 +65,7 @@ class SignInViewModel @Inject constructor(
                         fail(R.string.sign_in_error_firebase)
                     }
                 }
-                GoogleSignInResult.Cancelled -> _state.update { it.copy(phase = SignInPhase.Idle) }
-                GoogleSignInResult.NoAccount -> fail(R.string.sign_in_error_no_account)
-                GoogleSignInResult.PlayServicesOutdated -> fail(R.string.sign_in_error_play_services)
-                GoogleSignInResult.Failed -> fail(R.string.sign_in_error_generic)
+                else -> result.failureMessage()?.let(::fail) ?: _state.update { it.copy(phase = SignInPhase.Idle) }
             }
         }
     }

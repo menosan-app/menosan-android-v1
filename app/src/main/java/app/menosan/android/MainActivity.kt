@@ -13,6 +13,7 @@ import app.menosan.android.data.repo.AccountRepository
 import app.menosan.android.navigation.DashboardRoute
 import app.menosan.android.navigation.MenosanNavHost
 import app.menosan.android.navigation.SignInRoute
+import app.menosan.android.navigation.WelcomeRoute
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -27,9 +28,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // A confirmed account opens straight to the dashboard, even offline (manual logging works offline).
-        // Otherwise sign-in runs the Google + `GET /v1/me` checks.
-        val startDestination: Any = if (accounts.hasConfirmedAccount()) DashboardRoute else SignInRoute
+        // A confirmed account opens straight to Home, even offline (manual logging works offline). A Google user
+        // without a confirmed account resumes at Log in, which re-checks `GET /v1/me`. Everyone else sees Welcome.
+        val startDestination: Any = when {
+            accounts.hasConfirmedAccount() -> DashboardRoute
+            auth.currentUser != null -> SignInRoute
+            else -> WelcomeRoute
+        }
 
         setContent {
             val authUser by auth.authState.collectAsStateWithLifecycle(initialValue = auth.currentUser)

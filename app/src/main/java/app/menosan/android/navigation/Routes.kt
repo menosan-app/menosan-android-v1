@@ -4,12 +4,22 @@ import kotlinx.serialization.Serializable
 
 // Type-safe navigation routes (plan §10 screens). Add arguments as data class properties.
 
+/** First screen when signed out: Create Account / Log in. */
+@Serializable
+data object WelcomeRoute
+
+/** "Log in" with Google. */
 @Serializable
 data object SignInRoute
 
 @Serializable
 data object CreateAccountRoute
 
+/** "You're in" after a new account is created. */
+@Serializable
+data object AccountReadyRoute
+
+/** Home tab. */
 @Serializable
 data object DashboardRoute
 
@@ -21,11 +31,11 @@ data class LogManualRoute(val entryId: String? = null)
 @Serializable
 data object LogPhotoRoute
 
-/** Current-week entries (AN-1). */
+/** Audit tab: current-week entries (AN-1). */
 @Serializable
 data object EntriesRoute
 
-/** Report history (AN-3). */
+/** Insights tab: report history and the latest report (AN-3). */
 @Serializable
 data object HistoryRoute
 
@@ -33,6 +43,6 @@ data object HistoryRoute
 @Serializable
 data class ReportRoute(val weekStart: String)
 
-/** Account settings and privacy (AN-4). */
+/** Profile tab: account settings and privacy (AN-4). */
 @Serializable
 data object SettingsRoute
