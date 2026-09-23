@@ -11,3 +11,4 @@ app/google-services.json
 *.keystore
 .DS_Store
 .google-services.json
+.claude/worktrees/
