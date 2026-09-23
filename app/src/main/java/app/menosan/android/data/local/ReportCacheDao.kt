@@ -15,6 +15,10 @@ interface ReportCacheDao {
     @Query("SELECT * FROM reports_cache WHERE week_start = :weekStart")
     suspend fun get(weekStart: LocalDate): ReportCacheEntity?
 
+    /** Every cached row, newest week first (AN-3: list sync and offline reports). */
+    @Query("SELECT * FROM reports_cache ORDER BY week_start DESC")
+    suspend fun getAll(): List<ReportCacheEntity>
+
     @Query("SELECT * FROM reports_cache WHERE week_start = :weekStart")
     fun observe(weekStart: LocalDate): Flow<ReportCacheEntity?>
 
