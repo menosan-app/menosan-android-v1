@@ -1,4 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- AN-4 (settings) strings. Each workstream keeps its strings in its own file to avoid merge conflicts. -->
 <resources>
+    <string name="profile_title">Profile</string>
+    <string name="profile_google_account">Google account</string>
+    <string name="profile_name_fallback">Your account</string>
+    <string name="profile_avatar_description">Account picture with your initials</string>
+
+    <!-- Preferences -->
+    <string name="profile_preferences">Preferences</string>
+    <string name="profile_appearance">Light / Dark mode</string>
+    <string name="profile_appearance_title">Appearance</string>
+    <string name="profile_theme_system">System default</string>
+    <string name="profile_theme_light">Light mode</string>
+    <string name="profile_theme_dark">Dark mode</string>
+    <string name="profile_done">Done</string>
+    <string name="profile_open">Open</string>
+
+    <!-- Data & privacy -->
+    <string name="profile_data_privacy">Data &amp; Privacy</string>
+    <string name="profile_privacy_statement">Your audit data is private. It\'s never used for public rankings, leaderboards, or comparisons with other households, and it\'s never shared with third parties.</string>
+    <string name="profile_privacy_notice">Read the privacy notice</string>
+    <string name="profile_export">Export my data</string>
+    <string name="profile_exporting">Saving your data…</string>
+    <string name="profile_delete">Delete my account &amp; data</string>
+
+    <!-- Export (NFR16) -->
+    <string name="profile_export_title">Export your data?</string>
+    <string name="profile_export_body">Save a copy of all your entries, weekly reports, hotspots, and the ideas you tried as a file on this phone. This needs internet.</string>
+    <string name="profile_export_confirm">Export</string>
+    <string name="profile_cancel">Cancel</string>
+    <string name="profile_export_done">Your data was saved.</string>
+    <string name="profile_export_offline">Exporting needs internet. Please connect and try again.</string>
+    <string name="profile_export_server">We couldn\'t get your data right now. Please try again in a moment.</string>
+    <string name="profile_export_write_failed">We couldn\'t save the file there. Please try another folder.</string>
+
+    <!-- Logout (UFR3) -->
+    <string name="profile_log_out">Log out</string>
+    <string name="profile_logging_out">Logging out…</string>
+    <plurals name="profile_pending_note">
+        <item quantity="one">%d entry is still waiting to sync.</item>
+        <item quantity="other">%d entries are still waiting to sync.</item>
+    </plurals>
+    <string name="profile_logout_warning_title">Some entries haven\'t synced yet</string>
+    <plurals name="profile_logout_warning_body">
+        <item quantity="one">%d entry is only saved on this phone. If you log out now, it will be lost.</item>
+        <item quantity="other">%d entries are only saved on this phone. If you log out now, they will be lost.</item>
+    </plurals>
+    <string name="profile_logout_sync_first">Try to sync first</string>
+    <string name="profile_logout_anyway">Log out anyway</string>
+    <string name="profile_logout_syncing">Syncing your entries. Try logging out again in a moment.</string>
+    <string name="profile_logout_sync_offline">Your entries will sync once you\'re online. Connect, then try again.</string>
+    <string name="profile_logout_failed">Logging out didn\'t finish. Please try again.</string>
+    <string name="profile_logged_out">You\'re logged out. See you soon!</string>
+
+    <!-- Account deletion (UFR4, NFR4) -->
+    <string name="profile_delete_title">Delete your account &amp; data?</string>
+    <string name="profile_delete_body">This permanently deletes your Menosan account, entries, reports, and saved ideas. This can\'t be undone. You can export your data first if you\'d like a copy.</string>
+    <string name="profile_delete_type_label">Type DELETE to confirm</string>
+    <string name="profile_delete_confirm">Delete</string>
+    <string name="profile_deleting">Deleting…</string>
+    <string name="profile_delete_offline">Deleting your account needs internet. Please connect and try again.</string>
+    <string name="profile_delete_server">We couldn\'t finish deleting your account. Please try again.</string>
+    <string name="profile_delete_sign_in">Your sign-in expired. Log out, log in again, and then try again.</string>
+    <string name="profile_account_deleted">Your account and data were deleted. Thank you for trying Menosan.</string>
 </resources>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AN-4 (Home) strings. -->
+<resources>
+    <string name="dashboard_greeting">Hello!</string>
+    <string name="dashboard_greeting_name">Hello, %1$s!</string>
+    <string name="dashboard_subtitle">A cleaner home starts with small steps</string>
+
+    <!-- This week (live, no comparisons: DESIGN.md §5.4) -->
+    <string name="dashboard_this_week">Logged this week</string>
+    <plurals name="dashboard_entries_word">
+        <item quantity="one">entry</item>
+        <item quantity="other">entries</item>
+    </plurals>
+    <plurals name="dashboard_pieces">
+        <item quantity="one">%d pc</item>
+        <item quantity="other">%d pcs</item>
+    </plurals>
+    <plurals name="dashboard_entries">
+        <item quantity="one">%d entry</item>
+        <item quantity="other">%d entries</item>
+    </plurals>
+    <string name="dashboard_entries_and_pieces">%1$s · %2$s</string>
+    <string name="dashboard_week_empty">Nothing logged yet. Tap + to add your first item.</string>
+    <string name="dashboard_bars_description">Entries per day this week: %1$s</string>
+    <string name="dashboard_log_manual">Log manually</string>
+    <string name="dashboard_log_photo">Log with photo</string>
+
+    <!-- Sync -->
+    <string name="dashboard_pending_title">Waiting to sync</string>
+    <plurals name="dashboard_pending_body">
+        <item quantity="one">%d entry is saved on this phone and will sync when you\'re online.</item>
+        <item quantity="other">%d entries are saved on this phone and will sync when you\'re online.</item>
+    </plurals>
+    <string name="dashboard_failed_title">Some entries couldn\'t sync</string>
+    <string name="dashboard_failed_body">Open Audit to see which ones. Editing an entry tries again.</string>
+
+    <!-- Latest report (a closed week) -->
+    <string name="dashboard_report_ready">Your report for %1$s is ready</string>
+    <string name="dashboard_report_latest">Your latest report: %1$s</string>
+    <string name="dashboard_report_offline">Offline summary for %1$s</string>
+    <string name="dashboard_report_offline_body">Connect to the internet to get ideas for your hotspots.</string>
+    <string name="dashboard_report_open">Open report</string>
+    <string name="dashboard_report_only_special">Only special waste was logged, so there are no hotspots this time.</string>
+    <string name="dashboard_offline_pill">Offline summary</string>
+    <string name="dashboard_first_report_title">Your first weekly report</string>
+    <string name="dashboard_first_report_body">When the week ends on Saturday night, you\'ll get a report with your top hotspots and simple ideas to try.</string>
+
+    <string name="dashboard_hotspot_title">Top hotspot</string>
+    <string name="dashboard_from_report">From your %1$s report</string>
+    <string name="dashboard_top_hotspot_pill">Top Hotspot</string>
+
+    <string name="dashboard_trying_title">This week you\'re trying</string>
+    <string name="dashboard_pick_idea_title">Pick an idea to try this week</string>
+    <string name="dashboard_pick_idea_body">Your report has simple ideas for your hotspots. Choose one that fits your week.</string>
+
+    <string name="dashboard_impact_title">How your changes went</string>
+    <string name="dashboard_impact_quantities">%1$d → %2$d pcs</string>
+    <string name="dashboard_impact_decreased">Decreased</string>
+    <string name="dashboard_impact_same">Same</string>
+    <string name="dashboard_impact_increased">Increased</string>
+
+    <!-- Recent entries -->
+    <string name="dashboard_recent_title">Recent entries</string>
+    <string name="dashboard_recent_this_week">(This week)</string>
+    <string name="dashboard_view_all">View all</string>
+    <string name="dashboard_recent_empty">Your entries this week will show up here. Every item you log helps you spot small changes.</string>
+</resources>
