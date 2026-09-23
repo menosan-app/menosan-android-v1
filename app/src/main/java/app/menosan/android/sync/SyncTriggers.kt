@@ -3,6 +3,7 @@ package app.menosan.android.sync
 import app.menosan.android.core.auth.AuthService
 import app.menosan.android.core.network.ConnectivityObserver
 import app.menosan.android.data.repo.EntryRepository
+import app.menosan.android.data.repo.ReportRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -19,7 +20,8 @@ import javax.inject.Singleton
  * App-level sync triggers (plan §10 AN-1), started once from `MenosanApp.onCreate`:
  * - on app start, prune entries older than the retention window;
  * - on app start and after every sign-in, request a sync of the outbox;
- * - whenever a signed-in user is (or comes back) online, pull the current week and merge it.
+ * - whenever a signed-in user is (or comes back) online, pull the current week and merge it;
+ * - for a signed-in user, refresh reports (offline, this builds provisional summaries for closed weeks).
  * Saves request their own sync through the repository.
  */
 @Singleton
@@ -28,6 +30,7 @@ class SyncTriggers @Inject constructor(
     private val connectivity: ConnectivityObserver,
     private val repository: EntryRepository,
     private val engine: EntrySyncEngine,
+    private val reports: ReportRepository,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val started = AtomicBoolean(false)
@@ -48,6 +51,8 @@ class SyncTriggers @Inject constructor(
                     repository.requestSync()
                 }
                 if (online) repository.refreshCurrentWeek()
+                // Integration (AN-3): server reports when online; offline summaries for closed weeks otherwise (plan §5.7).
+                runCatching { reports.refreshReports() }
             }
         }
     }
