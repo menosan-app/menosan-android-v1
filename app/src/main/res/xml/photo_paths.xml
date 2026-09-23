@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AN-2: the camera writes into cache/photos/ through our FileProvider. Files are deleted right after reading (SFR8.5). -->
+<paths>
+    <cache-path name="photos" path="photos/" />
+</paths>
