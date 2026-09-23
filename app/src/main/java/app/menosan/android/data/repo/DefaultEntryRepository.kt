@@ -4,33 +4,51 @@ import app.menosan.android.core.model.Entry
 import app.menosan.android.core.model.EntryDraft
 import app.menosan.android.core.model.EntryRules
 import app.menosan.android.core.model.EntrySyncStatus
+import app.menosan.android.core.model.Taxonomy
 import app.menosan.android.core.time.WeekCalc
 import app.menosan.android.data.local.EntryDao
 import app.menosan.android.data.local.EntryEntity
 import app.menosan.android.data.local.SyncState
+import app.menosan.android.sync.EntrySyncEngine
+import app.menosan.android.sync.SyncRequester
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import java.time.Clock
+import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Room part of [EntryRepository] (prep for the parallel workstreams). Writes go to Room with the right outbox state.
- * TODO(AN-1): SyncWorker, [requestSync], [refreshCurrentWeek], week rollover in [observeCurrentWeek], retention.
+ * [EntryRepository] on Room (plan AN-1). Every change is written to Room first with its outbox state, then a sync is
+ * requested; `SyncWorker` sends the outbox later, so all of this works offline (UFR5–6, NFR7).
  */
 @Singleton
-class DefaultEntryRepository @Inject constructor(
+class DefaultEntryRepository internal constructor(
     private val dao: EntryDao,
-    private val taxonomy: TaxonomyRepository,
+    private val taxonomy: suspend () -> Taxonomy,
     private val clock: Clock,
+    private val syncRequester: SyncRequester,
+    private val engine: EntrySyncEngine,
 ) : EntryRepository {
 
-    override fun observeWeek(weekStart: java.time.LocalDate): Flow<List<Entry>> =
+    @Inject
+    constructor(
+        dao: EntryDao,
+        taxonomyRepository: TaxonomyRepository,
+        clock: Clock,
+        syncRequester: SyncRequester,
+        engine: EntrySyncEngine,
+    ) : this(dao, taxonomyRepository::taxonomy, clock, syncRequester, engine)
+
+    override fun observeWeek(weekStart: LocalDate): Flow<List<Entry>> =
         dao.observeWeek(weekStart).map { rows -> rows.map { it.toEntry() } }
 
-    override fun observeCurrentWeek(): Flow<List<Entry>> = observeWeek(WeekCalc.currentWeekStart(clock))
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observeCurrentWeek(): Flow<List<Entry>> = currentWeekStartFlow(clock).flatMapLatest { observeWeek(it) }
 
     override suspend fun get(id: String): Entry? =
         dao.getById(id)?.takeIf { it.syncState != SyncState.PENDING_DELETE }?.toEntry()
@@ -66,7 +84,7 @@ class DefaultEntryRepository @Inject constructor(
             subcategory = clean.subcategory,
             quantity = clean.quantity,
             updatedAt = clock.instant().truncatedTo(ChronoUnit.MILLIS),
-            // Never synced yet: still a create. Otherwise an update.
+            // Never confirmed by the server yet: still a create. Otherwise an update. Both are upserts on the wire.
             syncState = if (existing.syncState == SyncState.PENDING_CREATE) SyncState.PENDING_CREATE else SyncState.PENDING_UPDATE,
             lastError = null,
         )
@@ -76,38 +94,41 @@ class DefaultEntryRepository @Inject constructor(
     }
 
     override suspend fun delete(id: String) {
-        val existing = dao.getById(id) ?: throw EntryChangeException.NotFound()
+        val existing = dao.getById(id)?.takeIf { it.syncState != SyncState.PENDING_DELETE }
+            ?: throw EntryChangeException.NotFound()
         if (!WeekCalc.isCurrentWeek(existing.weekStart, clock)) throw EntryChangeException.WeekClosed()
-        if (existing.syncState == SyncState.PENDING_CREATE) {
-            dao.deleteById(id) // The server never saw it.
-        } else {
-            dao.upsert(existing.copy(syncState = SyncState.PENDING_DELETE, updatedAt = clock.instant(), lastError = null))
-            requestSync()
-        }
+        // Always a tombstone, even for a create that was never confirmed: the server may already have it (a sync whose
+        // answer was lost), and deleting an unknown id is a no-op there (contract §6.4). Hidden from every list.
+        dao.upsert(
+            existing.copy(
+                syncState = SyncState.PENDING_DELETE,
+                updatedAt = clock.instant().truncatedTo(ChronoUnit.MILLIS),
+                lastError = null,
+            ),
+        )
+        requestSync()
     }
 
     override fun observePendingCount(): Flow<Int> = dao.observePendingCount()
 
     override suspend fun hasPendingChanges(): Boolean = dao.getPending().isNotEmpty()
 
-    override fun requestSync() {
-        // TODO(AN-1): enqueue unique SyncWorker work (NetworkType.CONNECTED, exponential backoff).
-    }
+    override fun requestSync() = syncRequester.requestSync()
 
     override suspend fun refreshCurrentWeek() {
-        // TODO(AN-1): GET /v1/entries and merge (server wins for SYNCED rows, local wins for pending ones).
+        engine.pullCurrentWeek()
     }
 
     private suspend fun validate(draft: EntryDraft): EntryDraft {
         val name = draft.name.trim()
         if (name.isEmpty() || name.length > EntryRules.NAME_MAX) throw EntryChangeException.Invalid("name")
         if (draft.quantity !in EntryRules.QUANTITY_MIN..EntryRules.QUANTITY_MAX) throw EntryChangeException.Invalid("quantity")
-        if (taxonomy.taxonomy().subcategory(draft.subcategory) == null) throw EntryChangeException.Invalid("subcategory")
+        if (taxonomy().subcategory(draft.subcategory) == null) throw EntryChangeException.Invalid("subcategory")
         return draft.copy(name = name)
     }
 
     private suspend fun categoryOf(subcategory: String) =
-        taxonomy.taxonomy().subcategory(subcategory)?.category ?: throw EntryChangeException.Invalid("subcategory")
+        taxonomy().subcategory(subcategory)?.category ?: throw EntryChangeException.Invalid("subcategory")
 
     private fun EntryEntity.toEntry() = Entry(
         id = id,
