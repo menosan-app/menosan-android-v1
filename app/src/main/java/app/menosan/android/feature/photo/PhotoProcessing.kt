@@ -4,8 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.net.Uri
 import androidx.core.content.FileProvider
+import androidx.core.graphics.scale
+import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +66,7 @@ class AndroidPhotoProcessor @Inject constructor(
 
     private fun open(input: PhotoInput): InputStream = when (input) {
         is PhotoInput.Camera -> FileInputStream(input.file)
-        is PhotoInput.Gallery -> context.contentResolver.openInputStream(Uri.parse(input.uri))
+        is PhotoInput.Gallery -> context.contentResolver.openInputStream(input.uri.toUri())
             ?: throw PhotoUnreadableException("The photo couldn't be opened.")
     }
 
@@ -104,7 +105,7 @@ class AndroidPhotoProcessor @Inject constructor(
                 upright
             } else {
                 val smaller = PhotoImageMath.scaledSize(size, longSide)
-                Bitmap.createScaledBitmap(upright, smaller.width, smaller.height, true)
+                upright.scale(smaller.width, smaller.height)
             }
             try {
                 ByteArrayOutputStream().also { bitmap.compress(Bitmap.CompressFormat.JPEG, quality, it) }.toByteArray()

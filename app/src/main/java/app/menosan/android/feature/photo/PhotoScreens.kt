@@ -1,7 +1,6 @@
 package app.menosan.android.feature.photo
 
 import android.content.ActivityNotFoundException
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -64,6 +63,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.R
@@ -114,7 +114,7 @@ fun PhotoLogRoute(
         val uri = viewModel.startCapture()
         if (uri != null) {
             try {
-                takePicture.launch(Uri.parse(uri))
+                takePicture.launch(uri.toUri())
             } catch (_: ActivityNotFoundException) {
                 viewModel.onCameraUnavailable()
             }
