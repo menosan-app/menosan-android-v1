@@ -4,6 +4,62 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 
 ---
 
+# Handoff — menosan-android — 2026-09-24 (AN-3 reports)
+
+## 1. Session
+- **Agent / model:** Claude Code (Claude Opus 5.5)
+- **Workstream(s):** AN-3: reports, hotspots, interventions, impact, and offline provisional reports (plan §5.7, §10)
+- **Branch:** `feat/an3-reports` (from `main` `68e8fda`). Not pushed and not merged. Commits: `7dc26c4` analytics port, `5e88a83` repository and generator, `a93e86f` screens, `2bd2b37` lint fixes, plus `docs: handoff AN-3`.
+- **Overall state:** 🟡 Code complete. `testStagingDebugUnitTest lintStagingDebug assembleStagingDebug` passes (67 tests, lint "No issues found"). **Not yet checked against staging or on a device** (no emulator allowed this session), and two integration hooks need wiring (see §4).
+
+## 2. Done this session
+- [x] `core/analytics/Analytics.kt`: the backend's `aggregate()`, `findHotspots()`, `compare()`, and `measureImpact()`, copied with only the package changed (`ALGORITHM_VERSION = 1`). `AnalyticsTaxonomy.kt` has `Taxonomy.analyticsTaxonomy()`. `app/src/test/resources/analytics-test-vectors.json` is a copy of the backend's, and `AnalyticsVectorsTest` runs every case (all pass, same JSON).
+- [x] `data/repo/ReportRepository.kt` (interface + `ReportListItem`, `ReportView`, `RefreshResult`, `AdoptionResult`, `ApiError.isUnreachable`), `ReportRepositoryImpl.kt` (`DefaultReportRepository`), `ReportRepositoryModels.kt` (cache formats and analytics↔DTO conversions), and `ReportRepositoryModule.kt` (Hilt).
+  - `refreshReports()`: `GET /v1/reports` → summary rows; then full reports for the newest 2, the latest, provisional rows, and changed summaries. Rows the server no longer lists are removed. If the API is unreachable, it builds offline reports instead.
+  - `setAdopted()`: only while the report is the latest (I7, from the device clock plus `isLatest`). The cache is updated optimistically and reverted on error. `ADOPTION_WINDOW_CLOSED` also locks the cached report.
+  - `refreshAfterSync()` for `SyncWorker`; `generateOfflineReports()` for app open; `observeReports()`, `observeReport(week)`, and `observeLatestReport()` flows.
+- [x] `data/repo/LocalReportGenerator.kt` (plan §5.7): builds from local W entries (unsynced ones included). The comparison uses the cached server W−1 `stats`, or else local W−1 entries. Impact comes from the adoptions on the cached W−1 report. Also a last-week recap and the `missingComparisons` flag. Never recommendations. `ReportEntrySource` / `RoomReportEntrySource` wrap `EntryDao.getWeek`/`getPending`.
+- [x] `ReportCacheDao.getAll()` (the only DAO change; no entity or schema changes).
+- [x] Screens: `feature/reports/InsightsScreen.kt` (Insights tab: list newest first, latest highlighted, "Offline summary" label, pull to refresh, patient loading, empty and error states) and `ReportScreen.kt` + `ReportViewModel.kt` (the weekly report: totals, Canvas category bars, breakdown with taxonomy labels, Special line, comparison or "No comparison…", hotspot cards with criteria chips, ideas per hotspot, "How your changes went", offline banner and recap). `feature/interventions/Interventions.kt` has the recommendation card (type, cost, and effort badges, note, Keep it up, Adopt/Adopted), the details sheet (What to do, A note for you, Steps), and the impact card with supportive copy. Registered in `ReportsNavigation.kt`. Strings are in `strings_reports.xml`.
+- [x] Tests: `AnalyticsVectorsTest` (3), `LocalReportGeneratorTest` (9), `ReportRepositoryTest` (14), with in-memory fakes in `ReportTestFixtures.kt` (fake API, cache DAO, entry source).
+
+## 3. In progress (unfinished)
+| Item | Where | What's left |
+|---|---|---|
+| Staging and device check | device (not an emulator this session) | Seed a demo account with `/internal/dev/seed-history`, open Insights and a report, and adopt and un-adopt. Then airplane mode plus a week rollover → offline summary → reconnect → server report (plan AN-3 DoD, UAT 5, 5b, 6). |
+
+## 4. Next steps (in order)
+1. **Integrator, after AN-1 merges:** in `sync/SyncWorker`, after the outbox flush succeeds, call `reportRepository.refreshAfterSync()` (inject `ReportRepository`). Ignore its result; it never throws.
+2. **Integrator or AN-4:** on app open (for example, a `LaunchedEffect` in Home, or `MainActivity` once signed in), call `reportRepository.refreshReports()`. It builds offline reports by itself when the API is unreachable. For offline-only starts, `generateOfflineReports()` does just the local part. Opening the Insights tab already calls `refreshReports()`.
+3. **AN-4 Home:** `reportRepository.observeLatestReport()` gives the newest report with details (`ReportView`). Use `weekStart`/`weekEnd` for "Your report for … is ready", `isProvisional` for the offline label, and `adopted` + `canAdopt` for "This week you're trying: …" (only while `canAdopt`, the latest report). `observeReports().first()` gives the newest summary row. Open a report with `navController.navigate(ReportRoute(weekStart.toString()))`.
+4. Human: run the §3 checks on staging and a device, light and dark mode.
+
+## 5. Verify the current state
+```bash
+export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
+./gradlew testStagingDebugUnitTest lintStagingDebug assembleStagingDebug   # 67 tests pass; lint: No issues found
+```
+
+## 6. Known issues / failing tests
+- UI not viewed on a device yet (compile, lint, and unit tests only).
+- A concurrent adopt on two ideas of the same report can briefly flicker, because the first server response overwrites the second's optimistic flag until its own response arrives.
+- If an adopted intervention's hotspot was dropped by a late-sync regeneration (§5.6), the cached W−1 report no longer lists it, so the offline impact misses that adoption. The server report has it.
+- A week whose server summary row is replaced by a provisional one loses the "missing comparisons" hint on the next regeneration (edge case).
+
+## 7. Decisions made (also logged in docs/DECISIONS.md)
+- One scrolling report screen, bars instead of a donut, the cache and refresh policy, the provisional payload format, "unreachable" = network or 5xx, when the "Some comparisons…" line shows, when provisional rows are kept, the offline impact baseline and the "Not measured" rule, the un-adopt control, and `ReportEntrySource`.
+
+## 8. API contract changes
+- None.
+
+## 9. Environment / setup notes
+- No new dependencies. Files outside AN-3's packages: only `data/local/ReportCacheDao.kt` (added `getAll()`, allowed by the parallel rules).
+
+## 10. Questions / blockers for humans
+- Please run the staging and device checks (§3).
+
+---
+
 # Handoff — menosan-android — 2026-09-24 06:00 PHT (prep for parallel workstreams)
 
 ## 1. Session
