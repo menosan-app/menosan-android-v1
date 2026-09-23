@@ -4,6 +4,68 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 
 ---
 
+# Handoff — menosan-android — 2026-09-24 07:50 PHT (integration summary: AN-1…AN-4 merged)
+
+## 1. Session
+- **Agent / model:** Claude Code (Claude Opus 5.5), integrator. AN-1…AN-4 were built by parallel agents in separate worktrees; each has its own entry below.
+- **Branch:** `main` at `45a8c5f` (local). **Not pushed**: the push was blocked by the tool's permission classifier. `origin/main` is still `af47c66`; 30 commits are waiting.
+- **Overall state:** 🟡 All four feature workstreams are merged and compile. 166 unit tests pass, `lintStagingDebug` finds no issues, and staging and prod debug builds succeed. **Nothing has been used on a device yet** (no emulator was run, because memory is limited).
+
+## 2. Done
+- [x] AN-0 foundation and restyle, then the parallel prep (frozen `EntryRepository`, shared entry form, per-feature navigation, strings, and DAO files).
+- [x] **AN-1** manual logging, offline outbox + `SyncWorker`, current-week merge, retention, Audit tab, entry details, edit and delete (merged `0e23152`).
+- [x] **AN-3** analytics port (passes the shared test vectors), `ReportRepository` with cache and optimistic adopt, `LocalReportGenerator` offline summaries, Insights and weekly report screens (merged `679a8b2`).
+- [x] **AN-2** photo logging: camera or gallery, EXIF, resize and compress, upload, every error case, review with AI marking and a required confirmation, temp files deleted (merged `8f078ca`).
+- [x] **AN-4** Home dashboard, Profile (appearance, privacy, export via the system file picker, logout with a pending warning, type-DELETE account deletion) (merged `1ef162c`).
+- [x] Integration:
+  - reports refresh after each successful sync (`data/repo/ReportSyncHooks.kt`), and on app open and whenever the phone comes back online (`sync/SyncTriggers`);
+  - logout and account deletion cancel pending sync work and clear sync notices (`LocalDataCleaner`, `45a8c5f`).
+- [x] Staging debug APK: `D:\CCS6\Menosan\builds\menosan-staging-debug.apk` (from `45a8c5f`, signed with this PC's debug key, which is registered in Firebase).
+
+## 3. In progress (unfinished)
+| Item | Where | What's left |
+|---|---|---|
+| Device verification | phone with a Google account + updated Play services | Everything below in §4. |
+| AN-5 QA and release | plan §10, §11.2 | Full UAT checklist on an API 26 emulator (with updated Play services) and a low-end phone; signed `assembleStagingRelease`; Firebase App Distribution. |
+
+## 4. Next steps (in order)
+1. **Push:** `git push origin main` (run it yourself; it was blocked for the agent).
+2. **Install and sign in (developers):** `adb install -r D:\CCS6\Menosan\builds\menosan-staging-debug.apk`, then Welcome → Create Account → consent → Google → "You're in" → Home. Also Log in with an existing account. Staging may take ~60 s to wake up.
+3. **AN-1 check (beta blocker):** in airplane mode, log 5 entries, kill the app, reopen it, turn airplane mode off. Each entry should show Synced exactly once (`GET /v1/entries`). Also edit, delete, and "Couldn't sync".
+4. **Reports (AN-3):** seed a *demo* account with `/internal/dev/seed-history` (menosan-api `docs/ENVIRONMENTS.md` §6). Check Insights, the weekly report, hotspots, adopt and un-adopt, and impact. For the offline summary: roll the staging clock forward, go to airplane mode, then reconnect and see the server report replace it. **Reset the clock afterwards**, and never use it once real testers start.
+5. **Photo (AN-2):** camera and gallery, sideways photos, a sachet / PET bottle / leftover rice against staging, and the error cases (offline, a non-waste photo). `adb shell run-as app.menosan.android ls cache/photos` should be empty after a scan.
+6. **Home and Profile (AN-4):** empty states for a new user, export (open the file), logout with and without pending entries, delete account with a throwaway Google account, light, dark, and system themes, 1.3× font on a small screen.
+7. Fix what the device pass finds, then do AN-5: register the shared release keystore's SHA-1 and SHA-256 in Firebase, then build, sign, and distribute `v0.5-beta`.
+
+## 5. Verify the current state
+```bash
+export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
+./gradlew testStagingDebugUnitTest lintStagingDebug assembleStagingDebug   # 166 tests, lint "No issues found"
+```
+
+## 6. Known issues (from the workstream entries below)
+- Only unit tested: no screen has been viewed on a device since the restyle.
+- AN-1: an entry that couldn't sync and belongs to a closed week can't be edited or deleted on the phone, so it keeps the "Couldn't sync" chip.
+- AN-2: HEIC gallery photos can't be decoded on Android 8.0–8.1 (friendly error). If the app is killed on the review screen, the suggestion is lost.
+- AN-3: adopting two ideas quickly can make the first one flicker briefly.
+- AN-4: the DELETE confirmation accepts any letter case (agent's call; see DECISIONS). If the `204` answer to account deletion is lost, the user is asked to log in again.
+- The illustrations are low resolution (ask the designer for 3× or SVG).
+
+## 7. Decisions
+- 54 rows in `docs/DECISIONS.md` (AN-0 through AN-4). Most notable: the prod flavor uses the staging backend, Roboto, the mockups are style-only, type-DELETE, no extra preferences in v1.
+
+## 8. API contract changes
+- None.
+
+## 9. Environment / setup notes
+- New dependency: `androidx.exifinterface` (AN-2). New manifest `FileProvider` (`${applicationId}.photos`). Agent worktrees are in `.claude/worktrees/` (gitignored; their branches are merged and can be removed with `git worktree remove`).
+- New agent worktrees start from `origin/main`. Until you push, branch from local `main`.
+
+## 10. Questions / blockers for humans
+- Push `main` (§4.1). The device checks (§4.2–6) and the release keystore fingerprints in Firebase.
+
+---
+
 # Handoff — menosan-android — 2026-09-24 (AN-4 Home and Profile)
 
 ## 1. Session
