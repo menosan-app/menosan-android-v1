@@ -147,6 +147,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services)
     implementation(libs.googleid)
+    implementation(libs.androidx.exifinterface) // AN-2: EXIF rotation of photos
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

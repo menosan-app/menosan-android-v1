@@ -4,6 +4,70 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 
 ---
 
+# Handoff — menosan-android — 2026-09-24 (AN-2 photo logging)
+
+## 1. Session
+- **Agent / model:** Claude Code (Claude Opus 5.5)
+- **Workstream(s):** AN-2 Photo logging (plan §10 "Photo logging" and AN-2)
+- **Branch:** `feat/an2-photo` (based on `main` 34021e6, which has AN-0 and AN-1). Not pushed and not merged.
+- **Overall state:** 🟡 Code complete: 113 unit tests pass (44 new), lint has 0 errors and 0 warnings, and `assembleStagingDebug` works. **Not yet run on a device** (no emulator, memory rule), so the camera, gallery, EXIF, and a real staging analysis still need a human (§4.1).
+
+## 2. Done this session
+- [x] **Flow** (`feature/photo/PhotoLogViewModel.kt`, `PhotoScreens.kt`), registered in `PhotoNavigation.kt` on `LogPhotoRoute`:
+  - **Pick** (mockup `Upload Photo`): dashed upload card (gallery via `PickVisualMedia`, images only) and "Take a Photo" (system camera via `TakePicture`). The AI notice (SFR9.5: suggestions can be wrong, photo isn't stored) and a tip. **Offline:** "Photo logging needs internet — you can log manually." with a Log manually button; the photo buttons are disabled.
+  - **Analyzing** (mockup `Loading Screen (After Scanning)`): `BrandLoading` "Analyzing your Photo". After 10 s it adds "The server may be waking up…" (Render cold start). Cancel returns to Pick.
+  - **Errors**, each friendly and blame-free with a way forward (`PhotoErrors.kt`): network, `NOT_WASTE`, `ANALYSIS_FAILED`, `IMAGE_TOO_LARGE`, `RATE_LIMITED` (shows `details.resetsAt` in Manila time), `VALIDATION_FAILED`, `UNAUTHENTICATED`/`ACCOUNT_NOT_FOUND`, unknown/5xx, plus local "couldn't open this photo" and "no camera app". Retryable errors offer **Try again** (resends the in-memory photo), plus Try another photo and Log manually.
+  - **Review** ("Check the Details"): the shared `EntryFormFields` prefilled from the suggestion, all four fields in `aiSuggested` at first (`PhotoReview.kt`). A field is unmarked when its value changes or its chip is tapped. The server `warning` is in a banner. Save needs the **"I checked these details"** checkbox and a valid form, then `EntryRepository.create(draft)` with `source = PHOTO` (same offline outbox as manual entries). A Toast confirms and the flow pops back.
+- [x] **Image preparation** (`PhotoImageMath.kt` pure + `PhotoProcessing.kt` Android): bounds decode, power-of-two downsampling, EXIF orientation (all 8 values), long side ≤ 1280 px, JPEG q80, and a size budget of 2 MiB − 64 KB (quality 80 → 50, then shrink × 0.75). On `Dispatchers.IO`. Unreadable/HEIC-on-old-Android/OOM → friendly error.
+- [x] **Privacy (SFR8.5):** camera files live in `cache/photos/` and are deleted in `finally` right after reading (also on error or cancel); an empty file is deleted when the user backs out of the camera; leftovers are swept when the screen opens and closes. Gallery photos are read in place. The JPEG stays in memory only until success or the user moves on. Nothing is logged.
+- [x] **Seams for tests** (`PhotoPorts.kt`, Hilt `PhotoModule` in the same file): `PhotoProcessor`, `PhotoFiles`, `PhotoAnalysisClient` (`safeApiCall { api.analyzePhoto(MenosanApi.imagePart(jpeg)) }`), `NetworkStatus` (wraps `ConnectivityObserver`), `TaxonomySource` (wraps `TaxonomyRepository`).
+- [x] **Tests** (`app/src/test/.../feature/photo/`): `PhotoImageMathTest` (10), `PhotoReviewTest` (8), `PhotoErrorTest` (7), `PhotoLogViewModelTest` (19: gallery and camera paths, file deletion including errors and process death, retry, waking-up hint, cancel, confirmation required, save as PHOTO with edits, offline save message, invalid form).
+
+## 3. In progress (unfinished)
+| Item | Where | What's left |
+|---|---|---|
+| Device check | phone (or API 26 emulator with an updated Play services) | See §4.1. |
+
+## 4. Next steps (in order)
+1. **Human, on a device** (`./gradlew installStagingDebug`):
+   - **Camera:** + → Scan with Photo → Take a Photo → shoot a sachet → the review opens with all four fields tinted and chipped. Back out of the camera once too: you should land on the Pick screen with no error.
+   - **Gallery:** choose a photo; also try a portrait photo taken with the phone held sideways and one rotated in the gallery app (**EXIF rotation**: the analysis should still name the item correctly).
+   - **Real analysis against staging:** sachet, PET bottle, leftover rice (plan UAT 3). Edit one field → its chip disappears; tap another chip → it disappears; Save stays disabled until "I checked these details" is ticked; the entry shows in Audit as a photo entry and syncs. Add the results to `menosan-api/docs/photo-smoke.md` if you like.
+   - **Errors:** airplane mode on the Pick screen (offline banner + Log manually); a non-waste photo (a room) → "We couldn't spot waste here"; first call while staging sleeps → the waking-up hint after 10 s.
+   - **Privacy:** after a scan, `adb shell run-as app.menosan.android ls cache/photos` should be empty.
+   - Light and dark mode on the Pick, loading, error, and review screens.
+2. **Integrator:** merge order is AN-1 → AN-3 → AN-2 → AN-4. Expected conflicts only in `docs/HANDOFF.md`, `docs/DECISIONS.md`, and possibly `gradle/libs.versions.toml` / `app/build.gradle.kts` / `AndroidManifest.xml` if another branch also appends there.
+3. **AN-4:** the Home "Log with photo" quick action should navigate to `LogPhotoRoute` (the flow handles offline itself).
+
+## 5. Verify the current state
+```bash
+export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
+./gradlew testStagingDebugUnitTest lintStagingDebug assembleStagingDebug   # 113 tests pass; lint 0 errors, 0 warnings
+./gradlew testStagingDebugUnitTest --tests 'app.menosan.android.feature.photo.*'   # the 44 AN-2 tests
+```
+
+## 6. Known issues / failing tests
+- Not run on a device yet (§4.1). The Android part of image preparation (`AndroidPhotoProcessor`) has no JVM test; its math is covered by `PhotoImageMathTest`.
+- HEIC/HEIF gallery photos can't be decoded on Android 8.0–8.1 (`BitmapFactory` supports HEIF from API 28). The user sees "We couldn't open this photo" and can pick another or log manually.
+- Transparent PNGs (e.g. screenshots with alpha) are encoded to JPEG without a white background, so transparent areas turn black. Rare for waste photos.
+- If the app is killed while the **review** is open, the suggestion is lost (it's only in the ViewModel), and the user starts over. A capture in progress is not lost (the camera file path is saved).
+
+## 7. Decisions made (also logged in docs/DECISIONS.md)
+- System camera + photo picker, no CAMERA permission. Sizing and quality budget. When temp files are deleted. The in-memory photo for "Try again". AI-mark rules and the separate confirmation box. The 10 s waking-up hint. "Log manually" replaces the photo screen. Rate limit and sign-in error handling.
+
+## 8. API contract changes
+- None. Uses `POST /v1/photo-analysis` exactly as in contract §7.1.
+
+## 9. Environment / setup notes
+- **New dependency:** `androidx.exifinterface:exifinterface:1.4.2` (`libs.androidx.exifinterface`, added at the end of `[versions]`/`[libraries]` and after `googleid` in `app/build.gradle.kts`).
+- **Files outside `feature/photo/`:** `app/src/main/AndroidManifest.xml` (+1 `<provider>` for `androidx.core.content.FileProvider`, authority `${applicationId}.photos`), new `app/src/main/res/xml/photo_paths.xml`, `res/values/strings_photo.xml` (AN-2's), `gradle/libs.versions.toml`, `app/build.gradle.kts`. No shared Kotlin files were changed, and `EntryFormFields`' API is untouched.
+- The merged manifest has no CAMERA permission (checked).
+
+## 10. Questions / blockers for humans
+- Run the device checks (§4.1). I didn't start an emulator (memory rule).
+
+---
+
 # Handoff — menosan-android — 2026-09-24 (AN-3 reports)
 
 ## 1. Session

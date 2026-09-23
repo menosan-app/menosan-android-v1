@@ -1,11 +1,9 @@
 package app.menosan.android.feature.photo
 
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import app.menosan.android.R
-import app.menosan.android.core.ui.components.PlaceholderScreen
+import app.menosan.android.navigation.LogManualRoute
 import app.menosan.android.navigation.LogPhotoRoute
 
 /**
@@ -14,6 +12,12 @@ import app.menosan.android.navigation.LogPhotoRoute
  */
 fun NavGraphBuilder.photoScreens(navController: NavHostController) {
     composable<LogPhotoRoute> {
-        PlaceholderScreen(stringResource(R.string.add_entry_photo), "AN-2") { navController.popBackStack() }
+        PhotoLogRoute(
+            onDone = { navController.popBackStack() },
+            // Swap to the manual form, so its back button returns to where the user started (Home or Audit).
+            onLogManually = {
+                navController.navigate(LogManualRoute()) { popUpTo<LogPhotoRoute> { inclusive = true } }
+            },
+        )
     }
 }

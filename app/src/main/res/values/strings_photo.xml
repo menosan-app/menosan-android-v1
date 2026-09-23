@@ -1,4 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- AN-2 (photo) strings. Each workstream keeps its strings in its own file to avoid merge conflicts. -->
 <resources>
+    <!-- Take or choose a photo -->
+    <string name="photo_title">Scan with Photo</string>
+    <string name="photo_upload_title">Upload a Photo</string>
+    <string name="photo_upload_body">Tap to choose a photo from your gallery</string>
+    <string name="photo_take">Take a Photo</string>
+    <string name="photo_offline_title">You\'re offline</string>
+    <string name="photo_offline_body">Photo logging needs internet — you can log manually.</string>
+    <string name="photo_log_manually">Log manually</string>
+    <string name="photo_log_manually_instead">Log manually instead</string>
+    <string name="photo_ai_notice_title">About AI suggestions</string>
+    <string name="photo_ai_notice_body">Menosan suggests the item details from your photo. AI suggestions can be wrong, so you\'ll check them before saving. Your photo isn\'t stored.</string>
+    <string name="photo_tip">Tip: one kind of item per photo, in good light, works best.</string>
+
+    <!-- Analyzing -->
+    <string name="photo_analyzing_title">Analyzing your Photo</string>
+    <string name="photo_analyzing_body">Identifying your item to help you log your waste</string>
+    <string name="photo_analyzing_waking">This is taking a little longer. The server may be waking up, which can take up to a minute.</string>
+    <string name="photo_cancel">Cancel</string>
+
+    <!-- Errors: friendly and blame-free, always with another way forward -->
+    <string name="photo_try_again">Try again</string>
+    <string name="photo_try_another">Try another photo</string>
+    <string name="photo_back">Back</string>
+    <string name="photo_error_network_title">No connection right now</string>
+    <string name="photo_error_network_body">Photo logging needs internet. Check your connection and try again, or log this item manually.</string>
+    <string name="photo_error_not_waste_title">We couldn\'t spot waste here</string>
+    <string name="photo_error_not_waste_body">Try a closer photo of the item on a plain surface, or log it manually.</string>
+    <string name="photo_error_analysis_title">We couldn\'t read this photo</string>
+    <string name="photo_error_analysis_body">This happens sometimes. Try again, or use a clearer photo. You can always log it manually.</string>
+    <string name="photo_error_too_large_title">This photo is too large</string>
+    <string name="photo_error_too_large_body">Please try a different photo, or log the item manually.</string>
+    <string name="photo_error_rate_limited_title">You\'ve used today\'s photo scans</string>
+    <string name="photo_error_rate_limited_body">You can scan again tomorrow. Logging manually works anytime.</string>
+    <!-- %1$s: when the daily limit resets, e.g. "Thu, Oct 1 at 12:00 am" (Philippine time). -->
+    <string name="photo_error_rate_limited_body_at">You can scan again on %1$s. Logging manually works anytime.</string>
+    <string name="photo_error_invalid_title">We couldn\'t send this photo</string>
+    <string name="photo_error_invalid_body">Please try a different photo, or log the item manually.</string>
+    <string name="photo_error_signed_out_title">We couldn\'t confirm your sign-in</string>
+    <string name="photo_error_signed_out_body">Check your connection and try again. If this keeps happening, log out and sign in again from Profile.</string>
+    <string name="photo_error_unreadable_title">We couldn\'t open this photo</string>
+    <string name="photo_error_unreadable_body">Please choose a different photo (JPEG or PNG works best), or log the item manually.</string>
+    <string name="photo_error_no_camera_title">The camera isn\'t available</string>
+    <string name="photo_error_no_camera_body">You can choose a photo from your gallery instead, or log the item manually.</string>
+    <string name="photo_error_unknown_title">Something went wrong</string>
+    <string name="photo_error_unknown_body">Please try again in a moment, or log the item manually.</string>
+
+    <!-- Review -->
+    <string name="photo_review_title">Check the Details</string>
+    <string name="photo_review_warning_title">AI suggestion</string>
+    <string name="photo_review_hint">Fields marked \"AI suggestion\" came from your photo. Edit them, or tap the chip to keep a value as is.</string>
+    <string name="photo_review_confirm">I checked these details</string>
+    <string name="photo_review_save">Save Entry</string>
+    <string name="photo_review_confirm_required">Please check the details and tick the box to save.</string>
+    <string name="photo_review_error_invalid">Please check the highlighted fields.</string>
+    <string name="photo_review_error_save">Something went wrong while saving. Please try again.</string>
+    <string name="photo_saved">Entry saved. Thanks for checking the details!</string>
+    <string name="photo_saved_offline">Saved on this phone. It\'ll sync once you\'re back online.</string>
 </resources>
