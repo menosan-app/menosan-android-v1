@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AN-1 (manual logging, entries). Shared entry form strings are also used by AN-2 (photo review). -->
+<resources>
+    <string name="category_biodegradable">Biodegradable</string>
+    <string name="category_recyclable">Recyclable</string>
+    <string name="category_residual">Residual</string>
+    <string name="category_special">Special</string>
+
+    <string name="entry_category_title">Waste Category</string>
+    <string name="entry_category_hint">Select the main waste type</string>
+    <string name="entry_special_note">Special waste (batteries, e-waste, medicine…) is logged but not included in your weekly analysis.</string>
+    <string name="entry_subcategory_title">Subcategory</string>
+    <string name="entry_subcategory_hint">Select a specific waste group</string>
+    <string name="entry_subcategory_placeholder">Choose a subcategory</string>
+    <string name="entry_name_title">Item Name</string>
+    <string name="entry_name_placeholder">e.g., Leftover rice</string>
+    <string name="entry_quantity_title">Estimated Quantity</string>
+    <string name="entry_quantity_hint">Number of pieces (1–999)</string>
+    <string name="entry_quantity_placeholder">e.g., 3</string>
+    <string name="entry_quantity_unit">pcs</string>
+    <string name="entry_ai_suggestion">AI suggestion</string>
+    <string name="entry_ai_confirm">Confirm this AI suggestion</string>
+
+    <string name="entry_error_category">Choose a category.</string>
+    <string name="entry_error_subcategory">Choose a subcategory.</string>
+    <string name="entry_error_name">Give the item a short name.</string>
+    <string name="entry_error_quantity">Enter a number from 1 to 999.</string>
+</resources>

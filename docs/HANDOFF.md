@@ -4,6 +4,42 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 
 ---
 
+# Handoff — menosan-android — 2026-09-24 06:00 PHT (prep for parallel workstreams)
+
+## 1. Session
+- **Agent / model:** Claude Code (Claude Opus 5.5), integrator
+- **Workstream(s):** AN-0 prep so AN-1…AN-4 can run in parallel worktrees
+- **Branch:** `feat/an0-foundation` → merged into `main`
+- **Overall state:** 🟢 41 unit tests pass; lint 0 errors.
+
+## 2. Done this session
+- [x] `core/model/Entry.kt` (`Entry`, `EntryDraft`, `EntrySyncStatus`, `EntryRules`) and the **frozen `data/repo/EntryRepository` interface**. `DefaultEntryRepository` has the Room part (create, update, delete with the right outbox states and validation); sync and refresh are `TODO(AN-1)`. Bound in `di/RepositoryModule.kt`.
+- [x] `feature/logging/EntryFormState.kt` + `EntryFormFields.kt`: the shared, stateless entry form (4 category tiles including Special, a subcategory dropdown, name with a /60 counter, quantity in pcs, AI-suggestion marking per field). Used by AN-1 (manual and edit) and AN-2 (photo review). Tests are in `EntryFormStateTest`.
+- [x] DAOs split into `EntryDao.kt` (AN-1), `ReportCacheDao.kt` (AN-3), and `TaxonomyDao.kt`. `data/local/LocalDataCleaner` (wipes Room + session for logout and account deletion).
+- [x] `core/settings/AppPreferences` (`ThemeMode` System/Light/Dark), wired into `MainActivity`. AN-4 only builds the UI.
+- [x] One navigation file per feature (`feature/<x>/<X>Navigation.kt`, `NavGraphBuilder.xxxScreens(navController)`), called from `MenosanNavHost`. One strings file per workstream (`values/strings_logging.xml`, `strings_photo.xml`, `strings_reports.xml`, `strings_settings.xml`).
+- [x] `gradle.properties` heap lowered (Gradle 2 GB, Kotlin daemon 1.5 GB) so two worktrees can build at once on this 16 GB machine.
+
+## 3. Parallel development rules (all workstreams)
+1. Work in your own git worktree and branch (`feat/an1-logging`, `feat/an2-photo`, `feat/an3-reports`, `feat/an4-settings-home`). Never merge into `main` or push. The integrator merges branches that pass `./gradlew testStagingDebugUnitTest lintStagingDebug`, in the order AN-1 → AN-3 → AN-2 → AN-4.
+2. Copy the gitignored `local.properties` and `app/google-services.json` from the main checkout (`D:\CCS6\Menosan\menosan-android`) into your worktree. Never commit them.
+3. Edit only files your workstream owns (AGENTS.md table). Per feature:
+   - screens go in your `feature/<x>/<X>Navigation.kt`;
+   - feature-only routes go in your own package; `navigation/Routes.kt` is shared, so don't edit it;
+   - strings go in your `strings_<x>.xml`;
+   - Hilt bindings go in a module in your own package.
+   - Do **not** edit `di/*`, `navigation/*`, `core/*`, `MenosanNavHost`, or another workstream's files. If you really must, keep it minimal and list it in your handoff and final report.
+4. `EntryRepository` signatures are frozen. Don't rename or remove existing `EntryDao` methods (AN-3 reads `getWeek`/`getPending`). Adding methods is fine.
+5. **Database:** only AN-1 changes entities or the schema (v1 may still change until the 9/26 beta; after that, migrations only). AN-3 uses `reports_cache` as is and may add queries to `ReportCacheDao.kt`.
+6. New dependencies: add them only when needed, at the end of the right section of `gradle/libs.versions.toml` and `app/build.gradle.kts`, and list them in your handoff.
+7. **Never start an emulator** (memory). Build only when needed. Don't raise the Gradle heap.
+8. Put your handoff entry at the top of `docs/HANDOFF.md` and append rows to `docs/DECISIONS.md`. The integrator resolves merge conflicts in those two files.
+
+## 4. Next steps
+1. AN-1 and AN-3 in parallel now. AN-2 and AN-4 after those two are merged.
+
+---
+
 # Handoff — menosan-android — 2026-09-24 05:00 PHT
 
 ## 1. Session

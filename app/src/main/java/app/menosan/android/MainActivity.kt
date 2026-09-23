@@ -4,10 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.menosan.android.core.auth.AuthService
+import app.menosan.android.core.settings.AppPreferences
+import app.menosan.android.core.settings.ThemeMode
 import app.menosan.android.core.ui.theme.MenosanTheme
 import app.menosan.android.data.repo.AccountRepository
 import app.menosan.android.navigation.DashboardRoute
@@ -24,6 +27,8 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var accounts: AccountRepository
 
+    @Inject lateinit var preferences: AppPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,7 +43,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val authUser by auth.authState.collectAsStateWithLifecycle(initialValue = auth.currentUser)
-            MenosanTheme {
+            val themeMode by preferences.themeMode.collectAsStateWithLifecycle()
+            val darkTheme = when (themeMode) {
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+            }
+            MenosanTheme(darkTheme = darkTheme) {
                 MenosanNavHost(startDestination = remember { startDestination }, authUser = authUser)
             }
         }

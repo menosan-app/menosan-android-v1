@@ -11,25 +11,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import app.menosan.android.R
 import app.menosan.android.core.auth.AuthUser
-import app.menosan.android.core.ui.components.PlaceholderScreen
 import app.menosan.android.feature.auth.AccountReadyScreen
 import app.menosan.android.feature.auth.CreateAccountScreen
 import app.menosan.android.feature.auth.SignInScreen
 import app.menosan.android.feature.auth.WelcomeScreen
-import app.menosan.android.feature.dashboard.DashboardScreen
+import app.menosan.android.feature.dashboard.dashboardScreens
+import app.menosan.android.feature.entries.entriesScreens
+import app.menosan.android.feature.logging.loggingScreens
+import app.menosan.android.feature.photo.photoScreens
+import app.menosan.android.feature.reports.reportsScreens
+import app.menosan.android.feature.settings.settingsScreens
 
 /**
  * The app's navigation graph. The four tabs (Home, Audit, Insights, Profile) show the bottom bar with the "+" button.
- * Workstreams replace their [PlaceholderScreen] with the real screen. Signing out anywhere returns to Welcome.
+ * Features register their screens through `NavGraphBuilder.xxxScreens()` in their own package. Signing out anywhere returns to Welcome.
  */
 @Composable
 fun MenosanNavHost(
@@ -98,28 +100,13 @@ fun MenosanNavHost(
                 AccountReadyScreen(onGetStarted = { navController.navigateClearingStack(DashboardRoute) })
             }
 
-            // Tabs
-            composable<DashboardRoute> { DashboardScreen() }
-            composable<EntriesRoute> {
-                PlaceholderScreen(stringResource(R.string.tab_audit), "AN-1", onBack = null)
-            }
-            composable<HistoryRoute> {
-                PlaceholderScreen(stringResource(R.string.tab_insights), "AN-3", onBack = null)
-            }
-            composable<SettingsRoute> {
-                PlaceholderScreen(stringResource(R.string.tab_profile), "AN-4", onBack = null)
-            }
-
-            // Sub-screens
-            composable<LogManualRoute> {
-                PlaceholderScreen(stringResource(R.string.add_entry_manual), "AN-1") { navController.popBackStack() }
-            }
-            composable<LogPhotoRoute> {
-                PlaceholderScreen(stringResource(R.string.add_entry_photo), "AN-2") { navController.popBackStack() }
-            }
-            composable<ReportRoute> {
-                PlaceholderScreen(stringResource(R.string.nav_report), "AN-3") { navController.popBackStack() }
-            }
+            // Each feature registers its own screens (one file per workstream, so parallel work doesn't collide).
+            dashboardScreens(navController) // AN-4
+            entriesScreens(navController) // AN-1
+            loggingScreens(navController) // AN-1
+            photoScreens(navController) // AN-2
+            reportsScreens(navController) // AN-3
+            settingsScreens(navController) // AN-4
         }
     }
 
