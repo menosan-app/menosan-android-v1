@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A simple leaf, centred in the 72dp safe zone of the 108dp adaptive icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@color/ic_launcher_foreground"
+        android:pathData="M74,34C52,34 36,46 36,64c0,3 0.6,5.8 1.6,8.3L32,78l3,3 5.6,-5.6C43.2,76.4 46,77 49,77c18,0 28,-16 28,-40v-3z" />
+    <path
+        android:fillColor="@color/ic_launcher_background"
+        android:pathData="M42.5,73.5l1.6,1.6c6,-9.5 13,-18 22,-26l-1.4,-1.4c-9,7.6 -16.4,16 -22.2,25.8z" />
+</vector>
