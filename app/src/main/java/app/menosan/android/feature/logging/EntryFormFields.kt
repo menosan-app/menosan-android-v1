@@ -279,7 +279,8 @@ private fun CategoryTile(
     }
 }
 
-private fun WasteCategory.icon(): ImageVector = when (this) {
+/** The line icon of a main category (entry form tiles, entry rows, details). */
+fun WasteCategory.icon(): ImageVector = when (this) {
     WasteCategory.BIODEGRADABLE -> Icons.Outlined.Eco
     WasteCategory.RECYCLABLE -> Icons.Outlined.Recycling
     WasteCategory.RESIDUAL -> Icons.Outlined.DeleteOutline

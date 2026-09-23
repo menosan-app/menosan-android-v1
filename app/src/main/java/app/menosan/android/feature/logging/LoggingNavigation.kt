@@ -1,11 +1,8 @@
 package app.menosan.android.feature.logging
 
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import app.menosan.android.R
-import app.menosan.android.core.ui.components.PlaceholderScreen
 import app.menosan.android.navigation.LogManualRoute
 
 /**
@@ -13,7 +10,8 @@ import app.menosan.android.navigation.LogManualRoute
  * `MenosanNavHost` just calls [loggingScreens], so parallel workstreams never edit the same navigation file.
  */
 fun NavGraphBuilder.loggingScreens(navController: NavHostController) {
+    // New entry (entryId = null) or edit an existing one.
     composable<LogManualRoute> {
-        PlaceholderScreen(stringResource(R.string.add_entry_manual), "AN-1") { navController.popBackStack() }
+        LogEntryRoute(onDone = { navController.popBackStack() })
     }
 }

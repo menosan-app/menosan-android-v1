@@ -25,4 +25,102 @@
     <string name="entry_error_subcategory">Choose a subcategory.</string>
     <string name="entry_error_name">Give the item a short name.</string>
     <string name="entry_error_quantity">Enter a number from 1 to 999.</string>
+
+    <!-- Manual logging and editing (AN-1) -->
+    <string name="log_title_new">Waste Entry</string>
+    <string name="log_title_edit">Edit Entry</string>
+    <string name="log_offline_banner">You\'re offline. This entry will sync automatically once you\'re back online.</string>
+    <string name="log_save">Save Entry</string>
+    <string name="log_save_changes">Save Changes</string>
+    <string name="log_cancel">Cancel</string>
+    <string name="log_saved">Entry saved. Nice work keeping track!</string>
+    <string name="log_saved_offline">Saved on this phone. It\'ll sync once you\'re back online.</string>
+    <string name="log_saved_edit">Changes saved.</string>
+    <string name="log_error_not_found">We couldn\'t find this entry. It may have been deleted.</string>
+    <string name="log_error_week_closed">This entry is from a past week, so it can\'t be changed anymore.</string>
+    <string name="log_error_invalid">Please check the highlighted fields.</string>
+    <string name="log_error_generic">Something went wrong while saving. Please try again.</string>
+
+    <!-- Audit tab (AN-1) -->
+    <string name="audit_title">Audit</string>
+    <string name="audit_subtitle">Track your waste, build better habits.</string>
+    <string name="audit_this_week">This week</string>
+    <string name="audit_logged_this_week">logged this week</string>
+    <plurals name="audit_entries">
+        <item quantity="one">%d entry</item>
+        <item quantity="other">%d entries</item>
+    </plurals>
+    <plurals name="audit_pieces">
+        <item quantity="one">%d pc</item>
+        <item quantity="other">%d pcs</item>
+    </plurals>
+    <!-- The word under the big entry count, followed by the pieces ("entries · 40 pcs"). -->
+    <plurals name="audit_entries_word">
+        <item quantity="one">entry</item>
+        <item quantity="other">entries</item>
+    </plurals>
+    <string name="audit_entries_and_pieces">%1$s · %2$s</string>
+    <string name="audit_bars_description">Entries per day: %1$s</string>
+    <string name="audit_quick_actions">Quick Actions</string>
+    <string name="audit_log_manual">Log Waste Manually</string>
+    <string name="audit_log_manual_body">Add a new entry</string>
+    <string name="audit_scan">Scan with Photo</string>
+    <string name="audit_scan_body">Take or upload a photo</string>
+    <string name="audit_entries_title">This Week\'s Entries</string>
+    <string name="audit_empty_title">Nothing logged yet this week</string>
+    <string name="audit_empty_body">Tap + or a quick action to log your first item. Every entry helps you spot small changes.</string>
+    <string name="audit_pending_title">Entries waiting to sync</string>
+    <plurals name="audit_pending_body">
+        <item quantity="one">%d change is saved on this phone and will sync automatically once you\'re online.</item>
+        <item quantity="other">%d changes are saved on this phone and will sync automatically once you\'re online.</item>
+    </plurals>
+    <string name="audit_failed_title">Some entries couldn\'t sync</string>
+    <string name="audit_failed_body">Open an entry to see why. Editing it will try again.</string>
+    <string name="audit_reverted_title">A change couldn\'t be saved</string>
+    <plurals name="audit_reverted_body">
+        <item quantity="one">%d change was for a week that had already closed, so we kept the saved version.</item>
+        <item quantity="other">%d changes were for a week that had already closed, so we kept the saved versions.</item>
+    </plurals>
+    <string name="audit_dismiss">Dismiss</string>
+    <string name="audit_earlier_show">Show earlier weeks</string>
+    <string name="audit_earlier_hide">Hide earlier weeks</string>
+    <string name="audit_earlier_note">Past weeks are read-only.</string>
+
+    <!-- Entry rows, chips, and menus (AN-1) -->
+    <string name="sync_synced">Synced</string>
+    <string name="sync_pending">To Sync</string>
+    <string name="sync_failed">Couldn\'t sync</string>
+    <string name="entry_more_options">More options for %1$s</string>
+    <string name="entry_menu_details">View full details</string>
+    <string name="entry_menu_edit">Edit entry</string>
+    <string name="entry_menu_delete">Delete entry</string>
+    <string name="entry_row_meta">%1$s • %2$s</string>
+
+    <!-- Delete confirmation (AN-1) -->
+    <string name="delete_title">Delete this entry?</string>
+    <string name="delete_body">This entry will be removed from your audit. This can\'t be undone.</string>
+    <string name="delete_confirm">Delete</string>
+    <string name="delete_cancel">Cancel</string>
+    <string name="delete_done">Entry deleted.</string>
+    <string name="delete_week_closed">This entry is from a past week, so it can\'t be deleted.</string>
+    <string name="delete_failed">Couldn\'t delete this entry. Please try again.</string>
+
+    <!-- Entry details (AN-1) -->
+    <string name="details_title">Entry Details</string>
+    <string name="details_item_name">Item Name</string>
+    <string name="details_quantity">Quantity</string>
+    <string name="details_date">Date</string>
+    <string name="details_time">Time</string>
+    <string name="details_method">Entry Method</string>
+    <string name="details_sync">Sync Status</string>
+    <string name="details_method_manual">Manual</string>
+    <string name="details_method_photo">Photo (AI-assisted)</string>
+    <string name="details_editable_until_title">Editable until %1$s</string>
+    <string name="details_editable_until_body">You can edit or delete this entry until the end of this logging week.</string>
+    <string name="details_read_only_title">From a past week</string>
+    <string name="details_read_only_body">Past weeks are read-only, so this entry stays as it is.</string>
+    <string name="details_sync_error_title">This entry couldn\'t sync</string>
+    <string name="details_edit">Edit</string>
+    <string name="details_delete">Delete</string>
+    <string name="details_not_found">This entry isn\'t here anymore.</string>
 </resources>
