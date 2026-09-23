@@ -36,9 +36,9 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 ## 4. Next steps (in order)
 1. **Human:** run the DoD check. Use a real phone, or an emulator where you've signed in to the Play Store so Play services updates. Run `./gradlew installStagingDebug`, then Continue with Google → create account → dashboard. Wait up to ~60 s on the first call if staging is asleep. Then merge `feat/an0-foundation` into `main`.
 2. **AN-0 follow-up (UI shell, from `docs/DESIGN.md`):** retheme `core/ui/theme` with the design tokens (cream / forest / sage / amber), bundle the Lexend-style font, replace the launcher icon with the two-leaf logo, restyle sign-in to match the Welcome, Login, and Create Account mockups, and add the bottom-nav shell (Home · Audit · + · Insights · Profile) with the "Add New Entry" sheet. Logo and illustration SVGs are needed from the designer.
-2. **AN-1 (Sat 9/26, critical path):** `EntryRepository` (write Room first, then enqueue sync), `sync/SyncWorker` (`@HiltWorker`, it already gets injected) using `MenosanApi.syncEntries` and `SyncStatus`, and the manual logging form and entries list. Swap the `LogManualRoute`/`EntriesRoute` placeholders in `navigation/MenosanNavHost.kt`. `EntryEntity`/`EntryDao` are ready to extend. Use `UUID.randomUUID()` for ids and `clock.instant()` for `createdAt`.
-3. **Before the first tester build:** if AN-1 changes the `entries` columns, it can still edit schema v1 **only until the 9/26 beta ships**. After that, bump the version and add a `Migration`.
-4. AN-2 / AN-3 / AN-4 per plan §10. AN-3 stores `ReportDto` JSON in `reports_cache.payload_json` (`MenosanJson.encodeToString(ReportDto.serializer(), …)`).
+3. **AN-1 (Sat 9/26, critical path):** `EntryRepository` (write Room first, then enqueue sync), `sync/SyncWorker` (`@HiltWorker`, it already gets injected) using `MenosanApi.syncEntries` and `SyncStatus`, and the manual logging form and entries list. Swap the `LogManualRoute`/`EntriesRoute` placeholders in `navigation/MenosanNavHost.kt`. `EntryEntity`/`EntryDao` are ready to extend. Use `UUID.randomUUID()` for ids and `clock.instant()` for `createdAt`.
+4. **Before the first tester build:** if AN-1 changes the `entries` columns, it can still edit schema v1 **only until the 9/26 beta ships**. After that, bump the version and add a `Migration`.
+5. AN-2 / AN-3 / AN-4 per plan §10. AN-3 stores `ReportDto` JSON in `reports_cache.payload_json` (`MenosanJson.encodeToString(ReportDto.serializer(), …)`).
 
 ## 5. Verify the current state
 ```bash
