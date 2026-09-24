@@ -4,44 +4,45 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 
 ---
 
-# Handoff — menosan-android — 2026-09-24 09:40 PHT (device test pass, reports)
+# Handoff — menosan-android — 2026-09-24 09:40 PHT (device test pass)
 
 ## 1. Session
 - **Agent / model:** Claude Code (Claude Opus 5.5), supporting a human device test. No code changes.
-- **Branch:** `main` at `03ec26f`, in sync with `origin/main` (the push from the previous entry is done).
-- **Overall state:** 🟢 First real-device pass done. Nothing broke.
+- **Branch:** `main`. `03ec26f` is pushed; the handoff commits after it are local.
+- **Overall state:** 🟢 The first real-device pass found no bugs.
 
 ## 2. Done this session
-- [x] **Device:** Samsung SM-S711B (Android 16, API 36), staging debug APK from `45a8c5f`.
-- [x] **The human reported these work on the device:** sign-up, manual logging, photo logging, and sync.
-- [x] **Photo privacy (SFR8.5):** `cache/photos` was empty after the scans.
-- [x] **Reports with seeded data** (demo account `yeum.burger@gmail.com`, seeded 3 weeks: Aug 30, Sep 6, Sep 13):
-  - The Insights reports matched the seed: pieces and hotspots correct.
-  - Report "entries" are one lower than the seed's count. This is correct: the seed counts Special battery entries, and the report's analyzed totals exclude them (I3).
-- [x] **Logs:** no crash, ANR, or app errors in logcat during the session (09:18–09:27).
+- [x] **Device:** Samsung SM-S711B (Android 16, API 36), staging debug APK from `45a8c5f`. No crashes or app errors in logcat.
+- [x] **Human-confirmed on the device:**
+  - sign-up, manual and photo logging, sync;
+  - photo temp files deleted (`cache/photos` empty);
+  - Insights and weekly reports on a seeded demo account (`yeum.burger@gmail.com`, weeks Aug 30, Sep 6, Sep 13): totals, the Special line, hotspots and chips, ideas;
+  - adopt and un-adopt on the latest report only, plus the Home report card, "trying", and impacts;
+  - **offline summary (UAT 5b)**, and then **replacement by the server report** after the staging clock moved to Sun 9/27 00:05 PHT;
+  - logout with an unsynced entry shows the warning;
+  - Light, Dark, and System themes;
+  - large system font.
+- [x] "Entries" on reports are one lower than the seed tool's count. This is correct: the seed counts Special entries, and the analyzed totals exclude them (I3).
+- [x] The staging clock was moved once for the replacement test, then reset (`overridden:false`).
 
 ## 3. In progress (unfinished)
 | Item | Where | What's left |
 |---|---|---|
-| Rest of the report checks | device | The human didn't confirm these: Special line shown, adopt/un-adopt on Sep 13–19, no Adopt on older reports, Home report card, "trying", and impacts. Confirm or re-run. |
-| Impact after adoption (UAT 6) and offline summary (UAT 5b) | device + staging clock | Not run. They need the phone date and the staging clock moved (see §4). |
+| Profile | device | Export (open the file), delete account (throwaway account), logout with nothing pending |
+| API 26 | emulator or old phone | One pass |
 
 ## 4. Next steps (in order)
-1. Confirm the unchecked report items in §3 on the demo account.
-2. **UAT 6 and 5b:**
-   - Log a few entries in real time.
-   - Set the server clock: `POST /internal/dev/clock {"now":"2026-09-26T16:05:00Z"}`.
-   - Set the phone date to Sun 9/27, with auto time off.
-   - Check the offline summary in airplane mode, then online.
-   - **Reset** the clock (`{}`) and turn auto time back on. Do all of this before real testers start on 9/26.
-3. **AN-4 device checks** (previous entry §4.6): export, logout with pending entries, delete account (throwaway account), themes, 1.3× font.
-4. **API 26** pass, then do the release keystore SHAs in Firebase → signed `v0.5-beta`.
+1. **Demo account `yeum.burger@gmail.com`:** its Sep 20–26 report was made early, while the clock was moved forward. That report won't include entries logged later this week, because the server only regenerates reports for late entries in closed weeks. Run `POST /internal/dev/reset {"email":"yeum.burger@gmail.com"}` before using it as a real account. This deletes all its entries and reports. Re-seed it if you need demo data again.
+2. Profile checks in §3, then an API 26 pass.
+3. Release keystore SHA-1 and SHA-256 in Firebase → signed `assembleStagingRelease` → `v0.5-beta` on Firebase App Distribution (Sat 9/26).
+4. Not tested: impact from the tester's own adoption on a later report (UAT 6). This needs one more clock roll with entries in the follow-up week. The seeded reports already show Decreased impacts.
 
 ## 5. Verify the current state
-- Staging: `GET /internal/dev/clock` → `overridden:false`. The clock wasn't moved this session.
+- Staging: `GET /internal/dev/clock` → `overridden:false`.
 
 ## 6. Known issues
-- None new. The demo account `yeum.burger@gmail.com` holds seeded past weeks. Clear it with `POST /internal/dev/reset {"email":…}` if it's needed as a clean account.
+- None new from the device.
+- Turn the test phone's automatic date and time back on. It was set to Sep 27 for the offline test.
 
 ## 7. Decisions
 - None.
