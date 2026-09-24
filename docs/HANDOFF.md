@@ -21,9 +21,10 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
   - **offline summary (UAT 5b)**, and then **replacement by the server report** after the staging clock moved to Sun 9/27 00:05 PHT;
   - logout with an unsynced entry shows the warning;
   - Light, Dark, and System themes;
-  - large system font.
+  - large system font;
+  - **own-adoption impact (UAT 6):** adopted on Sep 20–26, logged in the week of Sep 27, rolled the server and phone to Sun Oct 4. The Sep 27–Oct 3 report showed the impacts, and the adopt window moved to the new report.
 - [x] "Entries" on reports are one lower than the seed tool's count. This is correct: the seed counts Special entries, and the analyzed totals exclude them (I3).
-- [x] The staging clock was moved once for the replacement test, then reset (`overridden:false`).
+- [x] The staging clock was moved for the offline and impact tests, then reset (`overridden:false`).
 
 ## 3. In progress (unfinished)
 | Item | Where | What's left |
@@ -32,10 +33,9 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 | API 26 | emulator or old phone | One pass |
 
 ## 4. Next steps (in order)
-1. **Demo account `yeum.burger@gmail.com`:** its Sep 20–26 report was made early, while the clock was moved forward. That report won't include entries logged later this week, because the server only regenerates reports for late entries in closed weeks. Run `POST /internal/dev/reset {"email":"yeum.burger@gmail.com"}` before using it as a real account. This deletes all its entries and reports. Re-seed it if you need demo data again.
+1. **Demo account `yeum.burger@gmail.com`:** it now has reports for Sep 20–26 and Sep 27–Oct 3 made under a moved clock, plus entries dated Sep 27, which is in the future. Run `POST /internal/dev/reset {"email":"yeum.burger@gmail.com"}` before using it as a real account, then reinstall or log out on the phone so the local cache is cleared. The reset deletes all its entries and reports. Re-seed it if you need demo data again.
 2. Profile checks in §3, then an API 26 pass.
 3. Release keystore SHA-1 and SHA-256 in Firebase → signed `assembleStagingRelease` → `v0.5-beta` on Firebase App Distribution (Sat 9/26).
-4. Not tested: impact from the tester's own adoption on a later report (UAT 6). This needs one more clock roll with entries in the follow-up week. The seeded reports already show Decreased impacts.
 
 ## 5. Verify the current state
 - Staging: `GET /internal/dev/clock` → `overridden:false`.
