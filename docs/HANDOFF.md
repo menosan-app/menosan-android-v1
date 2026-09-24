@@ -19,7 +19,8 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
   - Insights and weekly reports on a seeded demo account (`yeum.burger@gmail.com`, weeks Aug 30, Sep 6, Sep 13): totals, the Special line, hotspots and chips, ideas;
   - adopt and un-adopt on the latest report only, plus the Home report card, "trying", and impacts;
   - **offline summary (UAT 5b)**, and then **replacement by the server report** after the staging clock moved to Sun 9/27 00:05 PHT;
-  - logout with an unsynced entry shows the warning;
+  - logout with an unsynced entry shows the warning; logout and login again with nothing pending;
+  - export (file saved and opened) and account deletion;
   - Light, Dark, and System themes;
   - large system font;
   - **own-adoption impact (UAT 6):** adopted on Sep 20–26, logged in the week of Sep 27, rolled the server and phone to Sun Oct 4. The Sep 27–Oct 3 report showed the impacts, and the adopt window moved to the new report.
@@ -29,12 +30,12 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 ## 3. In progress (unfinished)
 | Item | Where | What's left |
 |---|---|---|
-| Profile | device | Export (open the file), delete account (throwaway account), logout with nothing pending |
 | API 26 | emulator or old phone | One pass |
+| Release signing | `local.properties` | The shared keystore isn't configured on this PC (`MENOSAN_KEYSTORE_*`). The fingerprints are in Firebase. Also set `versionName` for the beta (still 0.1.0). |
 
 ## 4. Next steps (in order)
 1. **Demo account `yeum.burger@gmail.com`:** it now has reports for Sep 20–26 and Sep 27–Oct 3 made under a moved clock, plus entries dated Sep 27, which is in the future. Run `POST /internal/dev/reset {"email":"yeum.burger@gmail.com"}` before using it as a real account, then reinstall or log out on the phone so the local cache is cleared. The reset deletes all its entries and reports. Re-seed it if you need demo data again.
-2. Profile checks in §3, then an API 26 pass.
+2. API 26 pass.
 3. Release keystore SHA-1 and SHA-256 in Firebase → signed `assembleStagingRelease` → `v0.5-beta` on Firebase App Distribution (Sat 9/26).
 
 ## 5. Verify the current state
