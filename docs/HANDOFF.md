@@ -36,7 +36,7 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 ## 4. Next steps (in order)
 1. **Demo account `yeum.burger@gmail.com`:** it now has reports for Sep 20–26 and Sep 27–Oct 3 made under a moved clock, plus entries dated Sep 27, which is in the future. Run `POST /internal/dev/reset {"email":"yeum.burger@gmail.com"}` before using it as a real account, then reinstall or log out on the phone so the local cache is cleared. The reset deletes all its entries and reports. Re-seed it if you need demo data again.
 2. API 26 pass.
-3. Release keystore SHA-1 and SHA-256 in Firebase → signed `assembleStagingRelease` → `v0.5-beta` on Firebase App Distribution (Sat 9/26).
+3. (Release SHAs are already in Firebase.) Configure the keystore → signed `assembleStagingRelease` → `v0.5-beta` on Firebase App Distribution (Sat 9/26).
 
 ## 5. Verify the current state
 - Staging: `GET /internal/dev/clock` → `overridden:false`.
