@@ -4,6 +4,59 @@ Newest entry first. Use `docs/HANDOFF_TEMPLATE.md` for each entry. Every agent *
 
 ---
 
+# Handoff — menosan-android — 2026-09-24 09:40 PHT (device test pass, reports)
+
+## 1. Session
+- **Agent / model:** Claude Code (Claude Opus 5.5), supporting a human device test. No code changes.
+- **Branch:** `main` at `03ec26f`, in sync with `origin/main` (the push from the previous entry is done).
+- **Overall state:** 🟢 First real-device pass done. Nothing broke.
+
+## 2. Done this session
+- [x] **Device:** Samsung SM-S711B (Android 16, API 36), staging debug APK from `45a8c5f`.
+- [x] **The human reported these work on the device:** sign-up, manual logging, photo logging, and sync.
+- [x] **Photo privacy (SFR8.5):** `cache/photos` was empty after the scans.
+- [x] **Reports with seeded data** (demo account `yeum.burger@gmail.com`, seeded 3 weeks: Aug 30, Sep 6, Sep 13):
+  - The Insights reports matched the seed: pieces and hotspots correct.
+  - Report "entries" are one lower than the seed's count. This is correct: the seed counts Special battery entries, and the report's analyzed totals exclude them (I3).
+- [x] **Logs:** no crash, ANR, or app errors in logcat during the session (09:18–09:27).
+
+## 3. In progress (unfinished)
+| Item | Where | What's left |
+|---|---|---|
+| Rest of the report checks | device | The human didn't confirm these: Special line shown, adopt/un-adopt on Sep 13–19, no Adopt on older reports, Home report card, "trying", and impacts. Confirm or re-run. |
+| Impact after adoption (UAT 6) and offline summary (UAT 5b) | device + staging clock | Not run. They need the phone date and the staging clock moved (see §4). |
+
+## 4. Next steps (in order)
+1. Confirm the unchecked report items in §3 on the demo account.
+2. **UAT 6 and 5b:**
+   - Log a few entries in real time.
+   - Set the server clock: `POST /internal/dev/clock {"now":"2026-09-26T16:05:00Z"}`.
+   - Set the phone date to Sun 9/27, with auto time off.
+   - Check the offline summary in airplane mode, then online.
+   - **Reset** the clock (`{}`) and turn auto time back on. Do all of this before real testers start on 9/26.
+3. **AN-4 device checks** (previous entry §4.6): export, logout with pending entries, delete account (throwaway account), themes, 1.3× font.
+4. **API 26** pass, then do the release keystore SHAs in Firebase → signed `v0.5-beta`.
+
+## 5. Verify the current state
+- Staging: `GET /internal/dev/clock` → `overridden:false`. The clock wasn't moved this session.
+
+## 6. Known issues
+- None new. The demo account `yeum.burger@gmail.com` holds seeded past weeks. Clear it with `POST /internal/dev/reset {"email":…}` if it's needed as a clean account.
+
+## 7. Decisions
+- None.
+
+## 8. API contract changes
+- None.
+
+## 9. Environment / setup notes
+- The phone has USB debugging on. adb is at `%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe`.
+
+## 10. Questions / blockers for humans
+- None.
+
+---
+
 # Handoff — menosan-android — 2026-09-24 07:50 PHT (integration summary: AN-1…AN-4 merged)
 
 ## 1. Session
